@@ -16,10 +16,12 @@
 #define DIVERGENCE_ITERATIONS_DEFAULT 30
 #define DT_default 0.1f
 // Cosmetic
-#define SCREEN_OFFSET_X_default 150
-#define SCREEN_OFFSET_Y_default 100
-#define SCREEN_WIDTH_default 1120 - 2*SCREEN_OFFSET_X_default
-#define SCREEN_HEIGHT_default 780 - 2*SCREEN_OFFSET_Y_default
+#define SCREEN_OFFSET_X_default 500
+#define SCREEN_OFFSET_Y_default 200
+#define SCREEN_END_X_PADDING_default 50
+#define SCREEN_END_Y_PADDING_default 400
+#define SCREEN_WIDTH_default 800
+#define SCREEN_HEIGHT_default 450
 #define CELL_OUTLINE_THICKNESS_default 1.0f
 #define CELL_OUTLINE_COLOUR_default sf::Color(100, 100, 100, 255)
 #define CELL_FILL_COLOUR_default sf::Color(255, 255, 255, 100)

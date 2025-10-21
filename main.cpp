@@ -15,6 +15,8 @@ int SCREEN_WIDTH = SCREEN_WIDTH_default;
 int SCREEN_HEIGHT = SCREEN_HEIGHT_default;
 int SCREEN_OFFSET_X = SCREEN_OFFSET_X_default;
 int SCREEN_OFFSET_Y = SCREEN_OFFSET_Y_default;
+int SCREEN_END_X_PADDING = SCREEN_END_X_PADDING_default;
+int SCREEN_END_Y_PADDING = SCREEN_END_Y_PADDING_default;
 
 int DIVERGENCE_ITERATIONS = DIVERGENCE_ITERATIONS_DEFAULT;
 float DT = DT_default;
@@ -47,28 +49,28 @@ static float color1[3] = {1.0f, 0.0f, 0.0f};
 static float color2[3] = {0.0f, 0.0f, 1.0f}; 
 
 bool render_edge_velocities = true;
-float arrow_thickness = 2.0f;
-float arrow_head_multiplier = 5.0f;
+int arrow_thickness = 2;
+float head_fraction = 0.3f;
 float arrow_normalization = 1.0f;
 float arrow_max_size = 20.0f;
-static float arrow_color[3] = {0.0f, 1.0f, 0.0f};
+static float arrow_color[3] = {0.1f, 0.8f, 0.1f};
 
-
+sf::RenderWindow window;
 int main()
 {
-    sf::RenderWindow window(sf::VideoMode({SCREEN_WIDTH + 2 * SCREEN_OFFSET_X, SCREEN_HEIGHT + 2 * SCREEN_OFFSET_Y}, 10), "Fluid Simulation");
+    window.create(sf::VideoMode({SCREEN_WIDTH + (SCREEN_OFFSET_X + SCREEN_END_X_PADDING), SCREEN_HEIGHT + (SCREEN_OFFSET_Y + SCREEN_END_Y_PADDING)}, 10), "Fluid Simulation");
     window.setFramerateLimit(FRAME_RATE_LIMIT);
     ImGui::SFML::Init(window);
     initialize_shapes(main_shapes, NX, NY, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_OFFSET_X, SCREEN_OFFSET_Y);
 
     for(int i = 0; i < (NX + 1) * NY; i++)
     {
-        hvels[i] = 100;
+        hvels[i] = -randf(-1.0f, 1.0f);
     }
 
    for(int i = 0; i < NX * (NY + 1); i++)
    {
-       vvels[i] = INITIAL_Y_VELOCITY_default;
+       vvels[i] = randf(-1.0f, 1.0f);
    }
 
     for (int i = 0; i < NX * NY; i++)
@@ -97,6 +99,7 @@ int main()
         }
         ImGui::SFML::Update(window, deltaClock.restart());
         ImGui::Begin("Settings");
+        ImGui::InputInt("Padding X", &SCREEN_END_X_PADDING, 10, 100);
         ImGui::InputInt("Div Iter", &DIVERGENCE_ITERATIONS, 1, 10);
         ImGui::InputFloat("dt", &DT, DT_default * 0.1f, DT_default * 2.0f, "%.5f");
         ImGui::Checkbox("Render Shapes", &render_shapes);
@@ -125,9 +128,9 @@ int main()
         ImGui::Checkbox("Render Edge Velocities", &render_edge_velocities);
         if (render_edge_velocities)
         {
-            ImGui::SliderFloat("Arrow Thickness", &arrow_thickness, 0.1f, 5.0f, "%.2f");
-            ImGui::SliderFloat("Arrow Head Multiplier", &arrow_head_multiplier, 1.0f, 20.0f, "%.2f");
-            ImGui::SliderFloat("Arrow Normalization", &arrow_normalization, 0.1f, 10.0f, "%.2f");
+            ImGui::SliderInt("Arrow Thickness", &arrow_thickness, 1, 5);
+            ImGui::SliderFloat("Arrow Head Fraction", &head_fraction, 0.01f, 0.7f, "%.3f");
+            ImGui::SliderFloat("Arrow Normalization", &arrow_normalization, 0.1f, 3.0f, "%.2f");
             ImGui::SliderFloat("Arrow Max Size", &arrow_max_size, 0.1f, 100.0f, "%.2f");
             ImGui::ColorEdit3("Arrow Color", arrow_color);
         }
@@ -148,7 +151,7 @@ int main()
         }
         if (render_edge_velocities)
         {
-            display_edge_velocities(window, hvels, vvels, sim_dimensions, arrow_normalization, arrow_max_size, arrow_thickness, arrow_head_multiplier, convert_float_to_sf_colour(arrow_color));
+            display_edge_velocities(window, hvels, vvels, sim_dimensions, arrow_normalization, arrow_max_size, arrow_thickness, head_fraction, convert_float_to_sf_colour(arrow_color));
         }
         // drawArrow(window, sf::Vector2f(100, 100), sf::Vector2f(400, 400), 5.0f, 15.0f, sf::Color::Green);
         ImGui::SFML::Render(window);

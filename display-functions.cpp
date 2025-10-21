@@ -39,7 +39,7 @@ void display_shapes(sf::RenderWindow &window, const sf::RectangleShape *shapes, 
 #include <SFML/Graphics.hpp>
 #include <cmath>
 void drawArrow(sf::RenderWindow &window, sf::Vector2f start, sf::Vector2f end,
-               float thickness = 2.0f, float head_fraction = 0.2f,
+               int thickness = 2, float head_fraction = 0.2f,
                sf::Color colour = sf::Color::Red)
 {
     sf::Vector2f direction = end - start;
@@ -47,8 +47,8 @@ void drawArrow(sf::RenderWindow &window, sf::Vector2f start, sf::Vector2f end,
     sf::Angle angleDegrees = std::atan2(direction.y, direction.x) * sf::radians(1);
 
     float head_length = length * head_fraction;
-    sf::RectangleShape line(sf::Vector2f(length - head_length, thickness));
-    line.setOrigin({0, thickness * 0.5f});
+    sf::RectangleShape line(sf::Vector2f(length - head_length, (float)thickness));
+    line.setOrigin({0, (float)thickness * 0.5f});
     line.setPosition(start);
     line.setRotation(angleDegrees);
     line.setFillColor(colour);
@@ -67,13 +67,16 @@ void drawArrow(sf::RenderWindow &window, sf::Vector2f start, sf::Vector2f end,
     window.draw(head);
 }
 
-void display_edge_velocities(sf::RenderWindow &window, float *hvels, float *vvels, Dimensions &dims, float normalization, float arrow_max_size, float arrow_thickness, float arrow_headsize_multiplier, sf::Color arrow_color)
+void display_edge_velocities(sf::RenderWindow &window, float *hvels, float *vvels, Dimensions &dims, float normalization, float arrow_max_size, int arrow_thickness, float head_fraction, sf::Color arrow_color)
 {
     const float normalization_factor = 1.0f / (normalization);
     const int cells_x = dims.nx;
     const int cells_y = dims.ny;
     const float cell_screen_dx = (float)dims.screen_width / cells_x;
     const float cell_screen_dy = (float)dims.screen_height / cells_y;
+    const float screen_physics_x_ratio = (float)dims.screen_width / dims.size_physics_x_max;
+    const float screen_physics_y_ratio = (float)dims.screen_height / dims.size_physics_y_max;
+    const float screen_physics_min_ratio = (screen_physics_x_ratio < screen_physics_y_ratio) ? screen_physics_x_ratio : screen_physics_y_ratio;
     // Horizontal velocities first
     for (int i = 0; i < cells_x + 1; i++)
     {
@@ -83,13 +86,28 @@ void display_edge_velocities(sf::RenderWindow &window, float *hvels, float *vvel
             const float y_screen_pos = dims.screen_offset_y + (j + 0.5f) * cell_screen_dy;
             const int idx = FLAT(i, j, cells_x + 1);
             const float vel_value = hvels[idx];
-            const float clamped_value = clampf(vel_value * normalization_factor, -arrow_max_size, arrow_max_size);
+            const float clamped_value = clampf(vel_value * normalization_factor * screen_physics_min_ratio, -arrow_max_size, arrow_max_size);
             // const float normalized_value = clamped_value * normalization_factor;
             const float end_x_screen_pos = x_screen_pos + clamped_value;
             const float inv_normalized_abs_wrt_max = arrow_max_size / (fabsf(clamped_value));
-            drawArrow(window, sf::Vector2f(x_screen_pos, y_screen_pos), sf::Vector2f(end_x_screen_pos, y_screen_pos), arrow_thickness, 0.5f, arrow_color);
+            drawArrow(window, sf::Vector2f(x_screen_pos, y_screen_pos), sf::Vector2f(end_x_screen_pos, y_screen_pos), arrow_thickness,head_fraction,  arrow_color);
         }
     }
+    // Vertical velocities next
+    for (int i = 0; i < cells_x; i++)
+    {
+        const float x_screen_pos = dims.screen_offset_x + (i + 0.5f) * cell_screen_dx;
+        for (int j = 0; j < cells_y + 1; j++)
+        {
+            const float y_screen_pos = dims.screen_offset_y + j * cell_screen_dy;
+            const int idx = FLAT(i, j, cells_x);
+            const float vel_value = vvels[idx];
+            const float clamped_value = clampf(vel_value * normalization_factor * screen_physics_min_ratio, -arrow_max_size, arrow_max_size);
+            // const float normalized_value = clamped_value * normalization_factor;
+            const float end_y_screen_pos = y_screen_pos + clamped_value;
+            drawArrow(window, sf::Vector2f(x_screen_pos, y_screen_pos), sf::Vector2f(x_screen_pos, end_y_screen_pos), arrow_thickness,head_fraction,  arrow_color);
+        }   
+    }    
 }
 
 void display_flow_field(sf::RenderWindow &window, float *hvels, float *vvels, Dimensions &dims, const float density_x, const float density_y, sf::Color arrow_color)
