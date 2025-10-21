@@ -11,11 +11,10 @@
 #define NY_default 6
 #define SIZE_PHYSICS_X_MAX_default 10
 #define SIZE_PHYSICS_Y_MAX_default 6
-
 #define INITIAL_X_VELOCITY_default 0.0f
 #define INITIAL_Y_VELOCITY_default 0.0f
-
-
+#define DIVERGENCE_ITERATIONS_DEFAULT 30
+#define DT_default 0.1f
 // Cosmetic
 #define SCREEN_WIDTH_default 1000
 #define SCREEN_HEIGHT_default 600
