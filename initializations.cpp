@@ -1,15 +1,15 @@
 #include <SFML/Graphics.hpp>
 #include "constants.hpp"
 
-void initialize_velocities(float* hvels, float* vvels, int width, int height){
+void initialize_velocities_default(float* hvels, float* vvels, int width, int height){
     for(int i = 0; i < (width+1) * height; ++i) {
-        hvels[i] = 0.0f;
+        hvels[i] = INITIAL_X_VELOCITY;
     }
     for(int i = 0; i < width * (height+1); ++i) {
-        vvels[i] = 0.0f;
+        vvels[i] = INITIAL_Y_VELOCITY;
     }
 };
-void initialize_shapes(sf::RectangleShape* shapes){
+void initialize_shapes_default(sf::RectangleShape* shapes){
     const float cell_dx = CELL_PHYSICS_DX;
     const float cell_dy = CELL_PHYSICS_DY;
     for(int i=0; i<NX; i++){

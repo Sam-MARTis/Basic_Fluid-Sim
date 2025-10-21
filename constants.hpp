@@ -12,6 +12,9 @@
 #define SIZE_PHYSICS_X_MAX 10
 #define SIZE_PHYSICS_Y_MAX 6
 
+#define INITIAL_X_VELOCITY 0.0f
+#define INITIAL_Y_VELOCITY 0.0f
+
 
 // Cosmetic
 #define SCREEN_WIDTH 1000
@@ -31,6 +34,8 @@
 #define CELL_SCREEN_DY ((float)SCREEN_HEIGHT / NY)
 
 
+// Renderer parameters
+#define FRAME_RATE_LIMIT 60
 
 // #define DT 0.01f
 // #define MAX_DIVERGENCE_ITERATIONS 10
