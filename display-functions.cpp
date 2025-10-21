@@ -32,3 +32,8 @@ void display_shapes(sf::RenderWindow& window, const sf::RectangleShape* shapes, 
         }
     }
 }
+
+void display_flow_field(sf::RenderWindow& window, float* hvels, float* vvels, Dimensions& dims, const float density_x, const float density_y, sf::Color arrow_color){
+    //Todo
+    return;
+}
