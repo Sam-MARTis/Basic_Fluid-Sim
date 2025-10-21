@@ -17,6 +17,9 @@ auto clamp(const auto value, const auto min, const auto max)
 {
     return (value < min) ? min : (value > max) ? max : value;
 }
+float clampf(const float value, const float min, const float max){
+    return (value < min) ? min : (value > max) ? max : value;
+};
 float randf(const float min, const float max){
     return min + ((float)rand()/RAND_MAX) * (max - min);
 };

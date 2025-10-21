@@ -45,7 +45,7 @@ float *vvels = new float[NX * (NY + 1)];
 
 
 int main(){
-    sf::RenderWindow window(sf::VideoMode({SCREEN_WIDTH, SCREEN_HEIGHT}, 10), "Fluid Simulation");
+    sf::RenderWindow window(sf::VideoMode({SCREEN_WIDTH + 2*SCREEN_OFFSET_X, SCREEN_HEIGHT + 2*SCREEN_OFFSET_Y}, 10), "Fluid Simulation");
     window.setFramerateLimit(FRAME_RATE_LIMIT);
     ImGui::SFML::Init(window);
     initialize_shapes(main_shapes, NX, NY, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_OFFSET_X, SCREEN_OFFSET_Y);
