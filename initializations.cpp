@@ -10,16 +10,16 @@ void initialize_velocities(float* hvels, float* vvels, int width, int height){
     }
 };
 void initialize_shapes(sf::RectangleShape* shapes){
-    const float cell_dx = (float)SizeX / SCREEN_WIDTH;
-    const float cell_dy = (float)SizeY / SCREEN_HEIGHT;
+    const float cell_dx = CELL_PHYSICS_DX;
+    const float cell_dy = CELL_PHYSICS_DY;
     for(int i=0; i<NX; i++){
         for(int j=0; j<NY; j++){
             sf::RectangleShape& shape = shapes[FLAT(i, j, NX)];
             shape.setSize(sf::Vector2f(cell_dx, cell_dy));
-            shape.setPosition(i * cell_dx, j * cell_dy);
-            shape.setFillColor(sf::Color(255, 255, 255, 100));
-            shape.setOutlineColor(sf::Color(0, 0, 0, 255));
-            shape.setOutlineThickness(1.0f);
+            shape.setPosition(SCREEN_OFFSET_X + i * CELL_SCREEN_DX, SCREEN_OFFSET_Y + j * CELL_SCREEN_DY);
+            shape.setFillColor(CELL_DEFAULT_FILL_COLOUR);
+            shape.setOutlineColor(CELL_OUTLINE_COLOUR);
+            shape.setOutlineThickness(CELL_OUTLINE_THICKNESS);
         }
     }
 };
