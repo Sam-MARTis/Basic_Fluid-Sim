@@ -1,5 +1,5 @@
-#include<aux-functions.hpp> 
-#include<random>
+#include "aux-functions.hpp"
+#include <random>
 
 void print(const auto message)
 {
