@@ -36,39 +36,56 @@ void display_shapes(sf::RenderWindow& window, const sf::RectangleShape* shapes, 
 #include <SFML/Graphics.hpp>
 #include <cmath>
 
-void drawArrow(sf::RenderWindow& window, sf::Vector2f start, sf::Vector2f end, float thickness = 2.0f, float headSize = 10.0f, sf::Color color = sf::Color::Red)
+void drawArrow(sf::RenderWindow& window, sf::Vector2f start, sf::Vector2f end, float thickness = 2.0f, float headSize = 10.0f, sf::Color colour = sf::Color::Red)
 {
-    // --- Draw line part ---
+
     sf::Vector2f direction = end - start;
     float length = std::sqrt(direction.x * direction.x + direction.y * direction.y);
-    sf::Angle angle = std::atan2(direction.y, direction.x) * sf::degrees(1);
+    sf::Angle angle = sf::Angle(std::atan2(direction.y, direction.x) * sf::radians(1));
 
     sf::RectangleShape line(sf::Vector2f(length - headSize, thickness));
     line.setPosition(start);
     line.setRotation(angle);
-    line.setFillColor(color);
+    line.setFillColor(colour);
 
-    // --- Draw arrowhead ---
     sf::ConvexShape head;
     head.setPointCount(3);
     head.setPoint(0, {0, 0});
-    head.setPoint(1, {-headSize, headSize / 2});
-    head.setPoint(2, {-headSize, -headSize / 2});
-    head.setFillColor(color);
+    head.setPoint(1, {-2*headSize, (headSize)/ 2});
+    head.setPoint(2, {-2*headSize, -(headSize)/ 2});
+    head.setOrigin({0, -thickness / 2});
+    head.setFillColor(colour);
 
     head.setPosition(end);
     head.setRotation(angle);
 
-    // --- Draw both ---
     window.draw(line);
     window.draw(head);
 }
 
 
-void display_edge_velocities(sf::RenderWindow& window, float* hvels, float* vvels, Dimensions& dims, const float arrow_min, const float arrow_max){
-    const float normalization_factor = 1.0f / (arrow_max - arrow_min);
+void display_edge_velocities(sf::RenderWindow& window, float* hvels, float* vvels, Dimensions& dims, float normalization, float arrow_max_size, float arrow_thickness, float arrow_headsize_multiplier, sf::Color arrow_color){
+    const float normalization_factor = 1.0f / (normalization);
     const int cells_x = dims.nx;
     const int cells_y = dims.ny;
+    const float cell_screen_dx = (float)dims.screen_width / cells_x;
+    const float cell_screen_dy = (float)dims.screen_height / cells_y;
+    //Horizontal velocities first
+    for(int i=0; i<cells_x + 1; i++){
+        const float x_screen_pos = dims.screen_offset_x + i * cell_screen_dx;
+        for(int j=0; j<cells_y; j++){
+            const float y_screen_pos = dims.screen_offset_y + (j + 0.5f) * cell_screen_dy;
+            const int idx = FLAT(i, j, cells_x + 1);
+            const float vel_value = hvels[idx];
+            const float clamped_value = clampf(vel_value, -arrow_max_size, arrow_max_size);
+            const float normalized_value = clamped_value * normalization_factor;
+            const float end_x_screen_pos = x_screen_pos + normalized_value; // Scale arrow length
+            // const float start_y = dims.screen_offset_y + (j + 0.5f) * cell_screen_dy;
+            // const float end_x = start_x + normalized_value * cell_screen_dx * 0.5f; // Scale arrow length
+            // const float end_y = start_y;
+            drawArrow(window, sf::Vector2f(x_screen_pos, y_screen_pos), sf::Vector2f(end_x_screen_pos, y_screen_pos), arrow_thickness, arrow_thickness * arrow_headsize_multiplier, arrow_color);
+        }
+    }
 }
 
 void display_flow_field(sf::RenderWindow& window, float* hvels, float* vvels, Dimensions& dims, const float density_x, const float density_y, sf::Color arrow_color){

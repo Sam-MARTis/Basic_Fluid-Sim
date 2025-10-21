@@ -37,8 +37,22 @@ Might consider direct OpenGL rendering.
 float *hvels = new float[(NX + 1) * NY];
 float *vvels = new float[NX * (NY + 1)];
 
+
+// GUI variables
+bool render_shapes = true;
+float *rand_property = new float[NX * NY];
 static int current_mode = 0;
 const char *modes[] = {"default", "rand_test"};
+static float color1[3] = {1.0f, 0.0f, 0.0f}; 
+static float color2[3] = {0.0f, 0.0f, 1.0f}; 
+
+bool render_edge_velocities = false;
+float arrow_thickness = 2.0f;
+float arrow_head_multiplier = 5.0f;
+float arrow_normalization = 1.0f;
+float arrow_max_size = 20.0f;
+sf::Color arrow_color = sf::Color::Red;
+
 
 int main()
 {
@@ -46,11 +60,9 @@ int main()
     window.setFramerateLimit(FRAME_RATE_LIMIT);
     ImGui::SFML::Init(window);
     initialize_shapes(main_shapes, NX, NY, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_OFFSET_X, SCREEN_OFFSET_Y);
-    bool render_shapes = true;
-    float *rand_property = new float[NX * NY];
 
-    static float color1[3] = {1.0f, 0.0f, 0.0f}; 
-    static float color2[3] = {0.0f, 0.0f, 1.0f}; 
+
+
 
 
     for (int i = 0; i < NX * NY; i++)
@@ -105,7 +117,7 @@ int main()
             ImGui::ColorPicker3("Color 2", color2);
         }
 
-        // Should be sufficient for now. Will add more stuff later. First finish the sim setup
+
         ImGui::End();
 
         window.clear(sf::Color::Black);
@@ -120,7 +132,7 @@ int main()
                 display_shapes(window, main_shapes, sim_dimensions, nullptr, 0.0f, 1.0f, sf::Color::Red, sf::Color::Blue);
             }
         }
-        drawArrow(window, sf::Vector2f(100, 100), sf::Vector2f(200, 200), 5.0f, 15.0f, sf::Color::Green);
+        // drawArrow(window, sf::Vector2f(100, 100), sf::Vector2f(400, 400), 5.0f, 15.0f, sf::Color::Green);
         ImGui::SFML::Render(window);
         window.display();
     }
