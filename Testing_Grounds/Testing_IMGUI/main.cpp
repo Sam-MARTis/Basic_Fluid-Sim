@@ -11,10 +11,15 @@ int main() {
     sf::RenderWindow window(sf::VideoMode({SCREEN_WIDTH, SCREEN_HEIGHT}, 10), "Fluid Simulation");
     window.setFramerateLimit(60);
     ImGui::SFML::Init(window);
-    sf::CircleShape shape(RADIUS);
+    float radius = RADIUS;
+    sf::CircleShape shape(radius);
     shape.setFillColor(sf::Color::Green);
-    shape.setPosition({(SCREEN_WIDTH/2 - RADIUS) , (SCREEN_HEIGHT/2 - RADIUS)});
-    bool drawCicle = true;
+    shape.setOrigin({radius, radius});
+    shape.setPosition({(SCREEN_WIDTH/2 ) , (SCREEN_HEIGHT/2 )});
+    int dummy_iterations = 30;
+
+    bool drawCircle = true;
+
 
 
     sf::Clock deltaClock;
@@ -36,12 +41,16 @@ int main() {
 
             ImGui::Begin("Hello, world!");
             ImGui::Text("This is some useful text.");
-            ImGui::Checkbox("Draw Circle", &drawCicle);
+            ImGui::Checkbox("Draw Circle", &drawCircle);
+            ImGui::InputInt("Dummy Iterations", &dummy_iterations);
+            ImGui::SliderFloat("Radius", &radius, 10.f, 300.f);
+            shape.setRadius(radius);
+            shape.setOrigin({radius, radius});
             ImGui::End();
 
 
         window.clear(CLEAR_COLOUR);
-        if (drawCicle) {
+        if (drawCircle) {
             window.draw(shape);
         }
 
