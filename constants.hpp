@@ -7,17 +7,17 @@
 #define FLAT(x, y, width) ((y) * (width) + (x))
 
 
-#define NX_default 10
-#define NY_default 6
-#define SIZE_PHYSICS_X_MAX_default 10
-#define SIZE_PHYSICS_Y_MAX_default 6
+#define NX_default 16
+#define NY_default 9
+#define SIZE_PHYSICS_X_MAX_default NX_default
+#define SIZE_PHYSICS_Y_MAX_default NY_default
 #define INITIAL_X_VELOCITY_default 0.0f
 #define INITIAL_Y_VELOCITY_default 0.0f
 #define DIVERGENCE_ITERATIONS_DEFAULT 30
 #define DT_default 0.1f
 // Cosmetic
-#define SCREEN_WIDTH_default 1000
-#define SCREEN_HEIGHT_default 600
+#define SCREEN_WIDTH_default 1920
+#define SCREEN_HEIGHT_default 1080
 #define SCREEN_OFFSET_X_default 0
 #define SCREEN_OFFSET_Y_default 0
 #define CELL_OUTLINE_THICKNESS_default 1.0f
@@ -35,6 +35,21 @@
 
 // Renderer parameters
 #define FRAME_RATE_LIMIT 60
+
+
+struct Dimensions{
+    int nx;
+    int ny;
+    int size_physics_x_max;
+    int size_physics_y_max;
+    int screen_width;
+    int screen_height;
+    int screen_offset_x;
+    int screen_offset_y;
+
+    
+};
+
 
 // #define DT 0.01f
 // #define MAX_DIVERGENCE_ITERATIONS 10

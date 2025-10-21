@@ -17,7 +17,16 @@ int SCREEN_OFFSET_Y = SCREEN_OFFSET_Y_default;
 
 int DIVERGENCE_ITERATIONS = DIVERGENCE_ITERATIONS_DEFAULT;
 float DT = DT_default;
-
+Dimensions sim_dimensions = {
+    NX,
+    NY,
+    SIZE_PHYSICS_X_MAX_default,
+    SIZE_PHYSICS_Y_MAX_default,
+    SCREEN_WIDTH,
+    SCREEN_HEIGHT,
+    SCREEN_OFFSET_X,
+    SCREEN_OFFSET_Y
+};
 
 
 // Create the heap objects here
@@ -39,6 +48,7 @@ int main(){
     sf::RenderWindow window(sf::VideoMode({SCREEN_WIDTH, SCREEN_HEIGHT}, 10), "Fluid Simulation");
     window.setFramerateLimit(FRAME_RATE_LIMIT);
     ImGui::SFML::Init(window);
+    initialize_shapes(main_shapes, NX, NY, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_OFFSET_X, SCREEN_OFFSET_Y);
     
 
     // Okay, render loop. We got this
