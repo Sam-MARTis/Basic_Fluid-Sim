@@ -24,6 +24,12 @@
 #define CELL_OUTLINE_COLOUR_default sf::Color(100, 100, 100, 255)
 #define CELL_FILL_COLOUR_default sf::Color(255, 255, 255, 100)
 
+// Other
+// Display Options
+#define DISPLAY_DEFAULT_INDEX 0
+#define DISPLAY_RANDOM_INDEX 1
+
+
 
 
 // // Derived quantities from above

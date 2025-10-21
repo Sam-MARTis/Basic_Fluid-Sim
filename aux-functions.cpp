@@ -1,6 +1,7 @@
 #include <random>
-#include "aux-functions.hpp"
+#include "aux-functions.hpp" 
 #include "constants.hpp"
+#include<SFML/Graphics.hpp>
 
 
 // const float PHYSICS_SCREEN_X_RATIO = SIZE_PHYSICS_X_MAX / SCREEN_WIDTH;
@@ -35,4 +36,13 @@ float map_screen_to_physics_x(const float screen_coord_x, const float screen_off
 }
 float map_screen_to_physics_y(const float screen_coord_y, const float screen_offset_y, const float screen_physics_y_ratio){
     return ((screen_coord_y - screen_offset_y) * screen_physics_y_ratio);
+}
+
+sf::Color convert_float_to_sf_colour(float color_float[3])
+{
+    return sf::Color(
+        clampf(color_float[0], 0.0f, 1.0f) * 255,
+        clampf(color_float[1], 0.0f, 1.0f) * 255,
+        clampf(color_float[2], 0.0f, 1.0f) * 255
+    );
 }
