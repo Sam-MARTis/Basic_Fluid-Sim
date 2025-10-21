@@ -14,6 +14,7 @@ int main() {
     sf::CircleShape shape(RADIUS);
     shape.setFillColor(sf::Color::Green);
     shape.setPosition({(SCREEN_WIDTH/2 - RADIUS) , (SCREEN_HEIGHT/2 - RADIUS)});
+    bool drawCicle = true;
 
 
     sf::Clock deltaClock;
@@ -35,11 +36,15 @@ int main() {
 
             ImGui::Begin("Hello, world!");
             ImGui::Text("This is some useful text.");
+            ImGui::Checkbox("Draw Circle", &drawCicle);
             ImGui::End();
 
 
         window.clear(CLEAR_COLOUR);
-        window.draw(shape);
+        if (drawCicle) {
+            window.draw(shape);
+        }
+
         ImGui::SFML::Render(window);
         window.display();
     }
