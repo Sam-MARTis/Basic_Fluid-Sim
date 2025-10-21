@@ -18,3 +18,7 @@ Since different properties need different normalization factors, I will pass in 
 display_shapes(rendering_window, shapes, dimensions, properties_array, property_min, property_max)
 ```
 
+
+The GUI has a dropdown menu for choosing values like pressure, divergence, constant colour, etc.
+The property choosen is then used in the main.cpp to choose the appropriate property of the fluid sim container structure that contains all the data. This chosen property (an array pointer) is passed into the `display_shapes` function
+

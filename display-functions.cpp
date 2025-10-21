@@ -33,6 +33,44 @@ void display_shapes(sf::RenderWindow& window, const sf::RectangleShape* shapes, 
     }
 }
 
+#include <SFML/Graphics.hpp>
+#include <cmath>
+
+void drawArrow(sf::RenderWindow& window, sf::Vector2f start, sf::Vector2f end, float thickness = 2.0f, float headSize = 10.0f, sf::Color color = sf::Color::Red)
+{
+    // --- Draw line part ---
+    sf::Vector2f direction = end - start;
+    float length = std::sqrt(direction.x * direction.x + direction.y * direction.y);
+    sf::Angle angle = std::atan2(direction.y, direction.x) * sf::degrees(1);
+
+    sf::RectangleShape line(sf::Vector2f(length - headSize, thickness));
+    line.setPosition(start);
+    line.setRotation(angle);
+    line.setFillColor(color);
+
+    // --- Draw arrowhead ---
+    sf::ConvexShape head;
+    head.setPointCount(3);
+    head.setPoint(0, {0, 0});
+    head.setPoint(1, {-headSize, headSize / 2});
+    head.setPoint(2, {-headSize, -headSize / 2});
+    head.setFillColor(color);
+
+    head.setPosition(end);
+    head.setRotation(angle);
+
+    // --- Draw both ---
+    window.draw(line);
+    window.draw(head);
+}
+
+
+void display_edge_velocities(sf::RenderWindow& window, float* hvels, float* vvels, Dimensions& dims, const float arrow_min, const float arrow_max){
+    const float normalization_factor = 1.0f / (arrow_max - arrow_min);
+    const int cells_x = dims.nx;
+    const int cells_y = dims.ny;
+}
+
 void display_flow_field(sf::RenderWindow& window, float* hvels, float* vvels, Dimensions& dims, const float density_x, const float density_y, sf::Color arrow_color){
     //Todo
     return;

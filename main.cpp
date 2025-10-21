@@ -120,6 +120,7 @@ int main()
                 display_shapes(window, main_shapes, sim_dimensions, nullptr, 0.0f, 1.0f, sf::Color::Red, sf::Color::Blue);
             }
         }
+        drawArrow(window, sf::Vector2f(100, 100), sf::Vector2f(200, 200), 5.0f, 15.0f, sf::Color::Green);
         ImGui::SFML::Render(window);
         window.display();
     }
