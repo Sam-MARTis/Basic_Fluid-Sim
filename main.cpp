@@ -51,6 +51,11 @@ int main(){
     ImGui::SFML::Init(window);
     initialize_shapes(main_shapes, NX, NY, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_OFFSET_X, SCREEN_OFFSET_Y);
     bool render_shapes = true;
+    float *rand_property = new float[NX * NY];
+    for(int i=0; i<NX*NY; i++){
+        rand_property[i] = randf(0.0f, 1.0f);
+    }
+    
 
     // Okay, render loop. We got this
     sf::Clock deltaClock;
@@ -76,7 +81,7 @@ int main(){
 
         window.clear(sf::Color::Black);
         if(render_shapes){
-            display_shapes(window, main_shapes, sim_dimensions, nullptr, 0.0f, 1.0f, sf::Color::Red, sf::Color::Blue);
+            display_shapes(window, main_shapes, sim_dimensions, rand_property, 0.0f, 1.0f, sf::Color::Red, sf::Color::Blue);
         }
         ImGui::SFML::Render(window);
         window.display();
