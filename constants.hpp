@@ -7,31 +7,31 @@
 #define FLAT(x, y, width) ((y) * (width) + (x))
 
 
-#define NX 10
-#define NY 6
-#define SIZE_PHYSICS_X_MAX 10
-#define SIZE_PHYSICS_Y_MAX 6
+#define NX_default 10
+#define NY_default 6
+#define SIZE_PHYSICS_X_MAX_default 10
+#define SIZE_PHYSICS_Y_MAX_default 6
 
-#define INITIAL_X_VELOCITY 0.0f
-#define INITIAL_Y_VELOCITY 0.0f
+#define INITIAL_X_VELOCITY_default 0.0f
+#define INITIAL_Y_VELOCITY_default 0.0f
 
 
 // Cosmetic
-#define SCREEN_WIDTH 1000
-#define SCREEN_HEIGHT 600
-#define SCREEN_OFFSET_X 0
-#define SCREEN_OFFSET_Y 0
-#define CELL_OUTLINE_THICKNESS 1.0f
-#define CELL_OUTLINE_COLOUR sf::Color(100, 100, 100, 255)
-#define CELL_DEFAULT_FILL_COLOUR sf::Color(255, 255, 255, 100)
+#define SCREEN_WIDTH_default 1000
+#define SCREEN_HEIGHT_default 600
+#define SCREEN_OFFSET_X_default 0
+#define SCREEN_OFFSET_Y_default 0
+#define CELL_OUTLINE_THICKNESS_default 1.0f
+#define CELL_OUTLINE_COLOUR_default sf::Color(100, 100, 100, 255)
+#define CELL_FILL_COLOUR_default sf::Color(255, 255, 255, 100)
 
 
 
-// Derived quantities from above
-#define CELL_PHYSICS_DX ((float)SIZE_PHYSICS_X_MAX / NX)
-#define CELL_PHYSICS_DY ((float)SIZE_PHYSICS_Y_MAX / NY)
-#define CELL_SCREEN_DX ((float)SCREEN_WIDTH / NX)
-#define CELL_SCREEN_DY ((float)SCREEN_HEIGHT / NY)
+// // Derived quantities from above
+// #define CELL_PHYSICS_DX ((float)SIZE_PHYSICS_X_MAX / NX)
+// #define CELL_PHYSICS_DY ((float)SIZE_PHYSICS_Y_MAX / NY)
+// #define CELL_SCREEN_DX ((float)SCREEN_WIDTH / NX)
+// #define CELL_SCREEN_DY ((float)SCREEN_HEIGHT / NY)
 
 
 // Renderer parameters

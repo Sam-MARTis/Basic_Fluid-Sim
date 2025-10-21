@@ -1,15 +1,31 @@
 CXX := g++
-CXXFLAGS := -Wall -Wextra -std=c++20 -O2 
-LIBS := -lsfml-graphics -lsfml-window -lsfml-system
+CXXFLAGS := -Wall -Wextra -std=c++20 -O2 \
+            -Iimgui \
+            -Iimgui-sfml \
+            -I/usr/local/include
+
+LDFLAGS := -L/usr/local/lib
+LIBS := -lsfml-graphics -lsfml-window -lsfml-system -lGL -lpthread -ldl
+
 TARGET := fluid_sim
-SRC := main.cpp aux-functions.cpp initializations.cpp
-OBJ := $(SRC:.cpp=.o)
+
+SRC := main.cpp \
+       imgui/imgui.cpp \
+       imgui/imgui_widgets.cpp \
+       imgui/imgui_draw.cpp \
+       imgui/imgui_tables.cpp \
+       imgui-sfml/imgui-SFML.cpp \
+       aux-functions.cpp \
+       initializations.cpp \
+
 DEPS := constants.hpp aux-functions.hpp initializations.hpp
+
+OBJ := $(SRC:.cpp=.o)
 
 all: $(TARGET)
 
 $(TARGET): $(OBJ)
-	$(CXX) $(CXXFLAGS) -o $@ $^ $(LIBS)
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o $@ $^ $(LIBS)
 
 %.o: %.cpp $(DEPS)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
