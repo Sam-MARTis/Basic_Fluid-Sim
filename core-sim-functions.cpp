@@ -160,8 +160,48 @@ void calculate_divergences(const float* hvels, const float* vvels, const Dimensi
     }
 }
 
-void solve_pressure_for_divergence_free_velocity_field(float* hvels, float* vvels, float* pressures, const Dimensions& dims, const int iterations){
-    // Meant to mutate the pressure array.
 
+#define PRESSURES(i, j, nx, ny) (((i)>=0) && ((i)<(nx)) && ((j)>=0) && ((j)<(ny))) ? pressures[FLAT(i, j, nx)]: 0.0f
 
+void solve_pressure_for_divergence_free_velocity_field(float* hvels, float* vvels, float* pressures, const Dimensions& dims, const float ρ, const std::vector<bool>& walls, const float dt, const int iterations){
+    const int nx = dims.nx;
+    const int ny = dims.ny;
+    const float dx = (float)dims.size_physics_x_max / (float)dims.nx;
+    const float dy = (float)dims.size_physics_y_max / (float)dims.ny;
+    const float dy_by_dx = dy/dx;
+    const float dx_by_dy = dx/dy;
+    const float dx_by_dt = dx/dt;
+    const float dy_by_dt = dy/dt;
+    const float inv_dx2 = 1.0f / (dx * dx);
+    for(int iter=0; iter<iterations; iter++){
+        // It is assumed that all boundary cells are walls
+        for(int i=0; i<nx; i++){
+            for(int j=0; j<ny; j++){
+                const int idx = FLAT(i, j, nx);
+                if(walls[idx]==false){
+                    const char num_fluid_left_right = ((char)1 - (char)walls[FLAT(i-1, j, nx)]) + ((char)1 - (char)walls[FLAT(i+1, j, nx)]);
+                    const char num_fluid_top_bottom = ((char)1 - (char)walls[FLAT(i, j-1, nx)]) + ((char)1 - (char)walls[FLAT(i, j+1, nx)]);
+                    const float den = dy_by_dx * (float)num_fluid_left_right + dx_by_dy * (float)num_fluid_top_bottom;
+                    const float Pr = PRESSURES(i + 1, j, nx, ny);
+                    const float Pl = PRESSURES(i - 1, j, nx, ny);
+                    const float Pu = PRESSURES(i, j - 1, nx, ny);
+                    const float Pd = PRESSURES(i, j + 1, nx, ny);
+                    const float hvel_r = HVELS(i + 1, j, nx, ny);
+                    const float hvel_l = HVELS(i, j, nx, ny);
+                    const float vvel_u = VVELS(i, j, nx, ny);
+                    const float vvel_d = VVELS(i, j+1, nx, ny);
+                    const float rhs = (Pr + Pl)*dy_by_dx + (Pd + Pu)*dx_by_dy + ρ*((vvel_u - vvel_d)*dx_by_dt + (hvel_l - hvel_r)*dy_by_dt);
+                    pressures[idx] = rhs / den;
+
+                }else{
+                    pressures[idx] = 0.0f;
+                    continue;
+                }
+
+            }
+            
+        }
+    }
 }
+
+

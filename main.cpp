@@ -95,6 +95,16 @@ int main()
         rand_property[i] = randf(0.0f, 1.0f);
     }
 
+    for(int i=0; i< NX; i++){
+        obstacles[FLAT(i, 0, NX)] = true;
+        obstacles[FLAT(i, NY-1, NX)] = true;
+    }
+    for(int j=0; j< NY; j++){
+        obstacles[FLAT(0, j, NX)] = true;
+        obstacles[FLAT(NX-1, j, NX)] = true;
+    }
+
+    
     // Okay, render loop. We got this
     float mouse_x_physics = SIZE_PHYSICS_X_MAX_default / 2.0f;
     float mouse_y_physics = SIZE_PHYSICS_Y_MAX_default / 2.0f;
