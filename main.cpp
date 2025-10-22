@@ -5,6 +5,7 @@
 #include "initializations.hpp"
 #include "imgui.h"
 #include "imgui-SFML.h"
+#include "core-sim-functions.hpp"
 
 // FYI, if some quantity is in all caps, it is not supposed to be changed within any function except the settings gui
 
@@ -56,6 +57,7 @@ float arrow_max_size = 20.0f;
 static float arrow_color[3] = {0.1f, 0.8f, 0.1f};
 
 sf::RenderWindow window;
+
 int main()
 {
     window.create(sf::VideoMode({SCREEN_WIDTH + (SCREEN_OFFSET_X + SCREEN_END_X_PADDING), SCREEN_HEIGHT + (SCREEN_OFFSET_Y + SCREEN_END_Y_PADDING)}, 10), "Fluid Simulation");
@@ -79,6 +81,10 @@ int main()
     }
 
     // Okay, render loop. We got this
+    float mouse_x_physics = SIZE_PHYSICS_X_MAX_default / 2.0f;
+    float mouse_y_physics = SIZE_PHYSICS_Y_MAX_default / 2.0f;
+    sf::Vector2i mouse_position_screen;
+
     sf::Clock deltaClock;
     while (window.isOpen())
     {
@@ -95,6 +101,13 @@ int main()
                 {
                     window.close();
                 }
+            }
+            else if (event->is<sf::Event::MouseButtonPressed>())
+            {
+                mouse_position_screen = sf::Mouse::getPosition(window);
+                mouse_x_physics = (float)(mouse_position_screen.x - SCREEN_OFFSET_X) * ((float)SIZE_PHYSICS_X_MAX_default / (float)SCREEN_WIDTH);
+                mouse_y_physics = (float)(mouse_position_screen.y - SCREEN_OFFSET_Y) * ((float)SIZE_PHYSICS_Y_MAX_default / (float)SCREEN_HEIGHT);
+
             }
         }
         ImGui::SFML::Update(window, deltaClock.restart());
@@ -153,10 +166,22 @@ int main()
         {
             display_edge_velocities(window, hvels, vvels, sim_dimensions, arrow_normalization, arrow_max_size, arrow_thickness, head_fraction, convert_float_to_sf_colour(arrow_color));
         }
-        // drawArrow(window, sf::Vector2f(100, 100), sf::Vector2f(400, 400), 5.0f, 15.0f, sf::Color::Green);
+        // sf::Vector2f test_point = sf::Vector2f(SIZE_PHYSICS_X_MAX_default * 0.58f, SIZE_PHYSICS_Y_MAX_default * 0.59f);
+        sf::Vector2f test_point = sf::Vector2f(mouse_x_physics, mouse_y_physics);
+        sf::Vector2f velocity_at_test_point = find_velocity_at_point(test_point, hvels, vvels, sim_dimensions);
+        std::cout << "Velocity at point (" << test_point.x << ", " << test_point.y << "): ("
+                  << velocity_at_test_point.x << ", " << velocity_at_test_point.y << ")\n";
+        // sf::Vector2f screen_test_point = sf::Vector2f(SCREEN_OFFSET_X + (test_point.x * SCREEN_WIDTH / SIZE_PHYSICS_X_MAX_default),  SCREEN_OFFSET_Y + (test_point.y * SCREEN_HEIGHT / SIZE_PHYSICS_Y_MAX_default));
+        sf::Vector2f screen_test_point = sf::Vector2f(SCREEN_OFFSET_X + (test_point.x * SCREEN_WIDTH / SIZE_PHYSICS_X_MAX_default),  SCREEN_OFFSET_Y + (test_point.y * SCREEN_HEIGHT / SIZE_PHYSICS_Y_MAX_default));
+        sf::Vector2f screen_velocity_at_test_point = sf::Vector2f(velocity_at_test_point.x * SCREEN_WIDTH / SIZE_PHYSICS_X_MAX_default, velocity_at_test_point.y * SCREEN_HEIGHT / SIZE_PHYSICS_Y_MAX_default);
+        drawArrow(window, screen_test_point, screen_test_point + screen_velocity_at_test_point, 2, 0.3f, sf::Color::Yellow);
+
+        // drawArrow(window, sf::Vector2f(100, 100), sf::Vector2f(400, 400), 5.0f, 0.3f, sf::Color::Green);
         ImGui::SFML::Render(window);
         window.display();
     }
+
+
 
     ImGui::SFML::Shutdown();
 

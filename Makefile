@@ -17,9 +17,10 @@ SRC := main.cpp \
        imgui-sfml/imgui-SFML.cpp \
        aux-functions.cpp \
        initializations.cpp \
-	   display-functions.cpp
+	display-functions.cpp \
+       core-sim-functions.cpp
 
-DEPS := constants.hpp aux-functions.hpp initializations.hpp display-functions.hpp
+DEPS := constants.hpp aux-functions.hpp initializations.hpp display-functions.hpp core-sim-functions.hpp
 
 OBJ := $(SRC:.cpp=.o)
 
