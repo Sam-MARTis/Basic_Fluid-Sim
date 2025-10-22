@@ -17,6 +17,7 @@
 #define INITIAL_Y_VELOCITY_default 0.0f
 #define DIVERGENCE_ITERATIONS_DEFAULT 5
 #define DT_default 0.1f
+#define MIN_DT 0.0001f
 // Cosmetic
 #define SCREEN_OFFSET_X_default 100
 #define SCREEN_OFFSET_Y_default 150
