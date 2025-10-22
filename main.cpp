@@ -39,13 +39,14 @@ Might consider direct OpenGL rendering.
 */
 float *hvels = new float[(NX + 1) * NY];
 float *vvels = new float[NX * (NY + 1)];
+float *divergences = new float[NX * NY];
 
 
 // GUI variables
 bool render_shapes = true;
 float *rand_property = new float[NX * NY];
-static int current_mode = 0;
-const char *modes[] = {"default", "rand_test"};
+static int current_mode = 1;
+const char *modes[] = {"default", "Divergence"};
 static float color1[3] = {1.0f, 0.0f, 0.0f}; 
 static float color2[3] = {0.0f, 0.0f, 1.0f}; 
 
@@ -64,6 +65,8 @@ float flow_arrow_normalization = 3.0f;
 float flow_arrow_max_size = 20.0f;
 int flow_arrow_thickness = 1;
 float flow_arrow_head_fraction = 0.2f;
+
+float divergence_magnitude_range = 2.0f;
 
 sf::RenderWindow window;
 
@@ -98,6 +101,7 @@ int main()
     while (window.isOpen())
     {
         set_walls_dirichlet_boundary_conditions(hvels, vvels, sim_dimensions, nullptr, 0);
+        calculate_divergences(hvels, vvels, sim_dimensions, divergences);
         while (const std::optional<sf::Event> event = window.pollEvent())
         {
             ImGui::SFML::ProcessEvent(window, *event);
@@ -143,9 +147,15 @@ int main()
             }
             ImGui::EndCombo();
         }
-        if(current_mode == DISPLAY_RANDOM_INDEX){
-            ImGui::ColorPicker3("Color 1", color1);
-            ImGui::ColorPicker3("Color 2", color2);
+        if(current_mode == DISPLAY_DIVERGENCE_INDEX){
+            ImGui::Spacing(); 
+            ImGui::SliderFloat("|Div| Range", &divergence_magnitude_range, 0.05f, 5.0f, "%.3f");
+            ImGui::Text("Divergence Color Settings");
+            ImGui::ColorEdit3("Color 1", color1);
+            ImGui::ColorEdit3("Color 2", color2);
+            ImGui::Spacing();
+
+
         }
 
         ImGui::Checkbox("Render Edge Velocities", &render_edge_velocities);
@@ -179,9 +189,9 @@ int main()
         window.clear(sf::Color::Black);
         if (render_shapes)
         {
-            if (current_mode == DISPLAY_RANDOM_INDEX)
+            if (current_mode == DISPLAY_DIVERGENCE_INDEX)
             {
-                display_shapes(window, main_shapes, sim_dimensions, rand_property, 0.0f, 1.0f, convert_float_to_sf_colour(color1), convert_float_to_sf_colour(color2));
+                display_shapes(window, main_shapes, sim_dimensions, divergences, -divergence_magnitude_range, divergence_magnitude_range, convert_float_to_sf_colour(color1), convert_float_to_sf_colour(color2));
             }
             else if (current_mode == DISPLAY_DEFAULT_INDEX)
             {

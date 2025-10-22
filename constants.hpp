@@ -29,7 +29,7 @@
 // Other
 // Display Options
 #define DISPLAY_DEFAULT_INDEX 0
-#define DISPLAY_RANDOM_INDEX 1
+#define DISPLAY_DIVERGENCE_INDEX 1
 
 
 

@@ -141,3 +141,27 @@ void set_walls_dirichlet_boundary_conditions(float* hvels, float* vvels, const D
 void set_walls_no_slip_boundary_conditions(float* hvels, float* vvels, const Dimensions& dims, const int* obstacles, const int obstacles_count){
     // To be implemented later
 }
+
+void calculate_divergences(const float* hvels, const float* vvels, const Dimensions& dims, float *divergences){
+    const int nx = dims.nx;
+    const int ny = dims.ny;
+    const float inv_cell_x = 1/((float)dims.size_physics_x_max / (float)dims.nx);
+    const float inv_cell_y = 1/((float)dims.size_physics_y_max / (float)dims.ny);
+
+    for(int j=0; j<ny; j++){
+        for(int i=0; i<nx; i++){
+            const float hvel_right = HVELS(i + 1, j, nx, ny);
+            const float hvel_left = HVELS(i, j, nx, ny);
+            const float vvel_top = VVELS(i, j + 1, nx, ny);
+            const float vvel_bottom = VVELS(i, j, nx, ny);
+            const float divergence = (hvel_right - hvel_left) * inv_cell_x + (vvel_top - vvel_bottom) * inv_cell_y;
+            divergences[FLAT(i, j, nx)] = divergence;
+        }
+    }
+}
+
+void solve_pressure_for_divergence_free_velocity_field(float* hvels, float* vvels, float* pressures, const Dimensions& dims, const int iterations){
+    // Meant to mutate the pressure array.
+
+
+}
