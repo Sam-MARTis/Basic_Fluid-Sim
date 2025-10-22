@@ -54,9 +54,8 @@ struct Dimensions{
     int screen_height;
     int screen_offset_x;
     int screen_offset_y;
-
-    
 };
+
 
 
 // #define DT 0.01f

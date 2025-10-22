@@ -99,7 +99,7 @@ int main()
         }
         ImGui::SFML::Update(window, deltaClock.restart());
         ImGui::Begin("Settings");
-        ImGui::InputInt("Padding X", &SCREEN_END_X_PADDING, 10, 100);
+
         ImGui::InputInt("Div Iter", &DIVERGENCE_ITERATIONS, 1, 10);
         ImGui::InputFloat("dt", &DT, DT_default * 0.1f, DT_default * 2.0f, "%.5f");
         ImGui::Checkbox("Render Shapes", &render_shapes);
