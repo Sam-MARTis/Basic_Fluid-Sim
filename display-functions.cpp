@@ -68,7 +68,7 @@ void drawArrow(sf::RenderWindow &window, sf::Vector2f start, sf::Vector2f end,
     window.draw(head);
 }
 
-void display_edge_velocities(sf::RenderWindow &window, float *hvels, float *vvels, Dimensions &dims, float normalization, float arrow_max_size, int arrow_thickness, float head_fraction, sf::Color arrow_color)
+void display_edge_velocities(sf::RenderWindow &window, const float *hvels, const float *vvels, Dimensions &dims, float normalization, float arrow_max_size, int arrow_thickness, float head_fraction, sf::Color arrow_color)
 {
     const float normalization_factor = 1.0f / (normalization);
     const int cells_x = dims.nx;
@@ -111,8 +111,23 @@ void display_edge_velocities(sf::RenderWindow &window, float *hvels, float *vvel
     }    
 }
 
-void display_flow_field(sf::RenderWindow &window, float *hvels, float *vvels, Dimensions &dims, const float density_x, const float density_y, sf::Color arrow_color)
+void display_flow_field(sf::RenderWindow &window, const float *hvels, const float *vvels, Dimensions &dims, const float density_x, const float density_y, float normalization, float arrow_max_size, int arrow_thickness, float head_fraction, sf::Color arrow_color)
 {
-    // Todo
-    return;
+    const float screen_physics_x_ratio = (float)dims.screen_width / dims.size_physics_x_max;
+    const float screen_physics_y_ratio = (float)dims.screen_height / dims.size_physics_y_max;
+    const float screen_physics_min_ratio = (screen_physics_x_ratio < screen_physics_y_ratio) ? screen_physics_x_ratio : screen_physics_y_ratio;
+    const float normalization_factor = 1.0f / (normalization);
+    for(float i=density_x; i<dims.size_physics_x_max; i+=density_x){
+        for(float j=density_y; j<dims.size_physics_y_max; j+=density_y){
+            sf::Vector2f phys_position = sf::Vector2f(i, j);
+            sf::Vector2f velocity_at_point = find_velocity_at_point(phys_position, hvels, vvels, dims);
+            const float clamped_x_velocity = clampf(velocity_at_point.x * normalization_factor * screen_physics_min_ratio, -arrow_max_size, arrow_max_size);
+            const float clamped_y_velocity = clampf(velocity_at_point.y * normalization_factor * screen_physics_min_ratio, -arrow_max_size, arrow_max_size);
+            const float start_x_screen_pos = dims.screen_offset_x + phys_position.x * screen_physics_x_ratio;
+            const float start_y_screen_pos = dims.screen_offset_y + phys_position.y * screen_physics_y_ratio;
+            const float end_x_screen_pos = start_x_screen_pos + clamped_x_velocity;
+            const float end_y_screen_pos = start_y_screen_pos + clamped_y_velocity;
+            drawArrow(window, sf::Vector2f(start_x_screen_pos, start_y_screen_pos), sf::Vector2f(end_x_screen_pos, end_y_screen_pos), arrow_thickness, head_fraction, arrow_color);
+        }
+    }
 }

@@ -52,9 +52,18 @@ static float color2[3] = {0.0f, 0.0f, 1.0f};
 bool render_edge_velocities = true;
 int arrow_thickness = 2;
 float head_fraction = 0.3f;
-float arrow_normalization = 1.0f;
+float arrow_normalization = 2.0f;
 float arrow_max_size = 20.0f;
 static float arrow_color[3] = {0.1f, 0.8f, 0.1f};
+
+bool render_flow_field = true;
+float flow_field_density_x = 0.1f;
+float flow_field_density_y = 0.1f;
+static float flow_field_color[3] = {0.8f, 0.1f, 0.8f};
+float flow_arrow_normalization = 3.0f;
+float flow_arrow_max_size = 20.0f;
+int flow_arrow_thickness = 1;
+float flow_arrow_head_fraction = 0.2f;
 
 sf::RenderWindow window;
 
@@ -139,13 +148,29 @@ int main()
         }
 
         ImGui::Checkbox("Render Edge Velocities", &render_edge_velocities);
+        ImGui::Checkbox("Render Flow Field", &render_flow_field);
         if (render_edge_velocities)
         {
+            ImGui::Spacing();
+            ImGui::Text("Edge Velocity Settings");
             ImGui::SliderInt("Arrow Thickness", &arrow_thickness, 1, 5);
             ImGui::SliderFloat("Arrow Head Fraction", &head_fraction, 0.01f, 0.7f, "%.3f");
-            ImGui::SliderFloat("Arrow Normalization", &arrow_normalization, 0.1f, 3.0f, "%.2f");
+            ImGui::SliderFloat("Arrow Normalization", &arrow_normalization, 0.1f, 5.0f, "%.2f");
             ImGui::SliderFloat("Arrow Max Size", &arrow_max_size, 0.1f, 100.0f, "%.2f");
             ImGui::ColorEdit3("Arrow Color", arrow_color);
+        }
+        if(render_flow_field){
+            ImGui::Spacing();
+            ImGui::Text("Flow Field Settings");
+            ImGui::SliderFloat("Flow Field Density X", &flow_field_density_x, 0.01f, 1.0f, "%.3f");
+            ImGui::SliderFloat("Flow Field Density Y", &flow_field_density_y, 0.01f, 1.0f, "%.3f");
+            ImGui::SliderInt("Flow Arrow Thickness", &flow_arrow_thickness, 1, 5);
+            ImGui::SliderFloat("Flow Arrow Head Fraction", &flow_arrow_head_fraction, 0.01f, 0.7f, "%.3f");
+            ImGui::SliderFloat("Flow Arrow Normalization", &flow_arrow_normalization, 0.1f, 5.0f, "%.2f");
+            ImGui::SliderFloat("Flow Arrow Max Size", &flow_arrow_max_size, 0.1f, 100.0f, "%.2f");
+            ImGui::ColorEdit3("Flow Field Color", flow_field_color);
+
+
         }
 
         ImGui::End();
@@ -166,11 +191,14 @@ int main()
         {
             display_edge_velocities(window, hvels, vvels, sim_dimensions, arrow_normalization, arrow_max_size, arrow_thickness, head_fraction, convert_float_to_sf_colour(arrow_color));
         }
-        sf::Vector2f test_point = sf::Vector2f(mouse_x_physics, mouse_y_physics);
-        sf::Vector2f velocity_at_test_point = find_velocity_at_point(test_point, hvels, vvels, sim_dimensions);
-        sf::Vector2f screen_test_point = sf::Vector2f(SCREEN_OFFSET_X + (test_point.x * SCREEN_WIDTH / SIZE_PHYSICS_X_MAX_default),  SCREEN_OFFSET_Y + (test_point.y * SCREEN_HEIGHT / SIZE_PHYSICS_Y_MAX_default));
-        sf::Vector2f screen_velocity_at_test_point = sf::Vector2f(velocity_at_test_point.x * SCREEN_WIDTH / SIZE_PHYSICS_X_MAX_default, velocity_at_test_point.y * SCREEN_HEIGHT / SIZE_PHYSICS_Y_MAX_default);
-        drawArrow(window, screen_test_point, screen_test_point + screen_velocity_at_test_point, 2, 0.3f, sf::Color::Yellow);
+        if( render_flow_field){
+            display_flow_field(window, hvels, vvels, sim_dimensions, flow_field_density_x, flow_field_density_y, flow_arrow_normalization, flow_arrow_max_size, flow_arrow_thickness, flow_arrow_head_fraction, convert_float_to_sf_colour(flow_field_color));
+        }
+        // sf::Vector2f test_point = sf::Vector2f(mouse_x_physics, mouse_y_physics);
+        // sf::Vector2f velocity_at_test_point = find_velocity_at_point(test_point, hvels, vvels, sim_dimensions);
+        // sf::Vector2f screen_test_point = sf::Vector2f(SCREEN_OFFSET_X + (test_point.x * SCREEN_WIDTH / SIZE_PHYSICS_X_MAX_default),  SCREEN_OFFSET_Y + (test_point.y * SCREEN_HEIGHT / SIZE_PHYSICS_Y_MAX_default));
+        // sf::Vector2f screen_velocity_at_test_point = sf::Vector2f(velocity_at_test_point.x * SCREEN_WIDTH / SIZE_PHYSICS_X_MAX_default, velocity_at_test_point.y * SCREEN_HEIGHT / SIZE_PHYSICS_Y_MAX_default);
+        // drawArrow(window, screen_test_point, screen_test_point + screen_velocity_at_test_point, 2, 0.3f, sf::Color::Yellow);
 
         // drawArrow(window, sf::Vector2f(100, 100), sf::Vector2f(400, 400), 5.0f, 0.3f, sf::Color::Green);
         ImGui::SFML::Render(window);
