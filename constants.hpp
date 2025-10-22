@@ -30,9 +30,13 @@
 #define CELL_FILL_COLOUR_default sf::Color(255, 255, 255, 100)
 
 // Other
-// Display Options
+// Options
 #define DISPLAY_DEFAULT_INDEX 0
 #define DISPLAY_DIVERGENCE_INDEX 1
+
+
+#define RK2_INDEX 0
+#define RK4_INDEX 1
 
 
 

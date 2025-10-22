@@ -74,7 +74,7 @@ float DT = DT_default;
 float fluid_density = 1.225f;
 bool solve_pressure_divergence_free = false;
 
-int current_iterator = 1;
+int current_iterator = RK4_INDEX;
 const char *iterators[] = {"RK2", "RK4"};
 bool advect_velocity_field = false;
 sf::RenderWindow window;
