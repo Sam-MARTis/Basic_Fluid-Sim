@@ -97,6 +97,7 @@ int main()
     sf::Clock deltaClock;
     while (window.isOpen())
     {
+        set_walls_dirichlet_boundary_conditions(hvels, vvels, sim_dimensions, nullptr, 0);
         while (const std::optional<sf::Event> event = window.pollEvent())
         {
             ImGui::SFML::ProcessEvent(window, *event);

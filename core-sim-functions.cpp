@@ -114,8 +114,30 @@ sf::Vector2f find_velocity_at_point(sf::Vector2f phys_position, const  float* hv
         vvel_right = INTERPOLATE(vvel_2, vvel_4, j_frac);
         vvel = INTERPOLATE(vvel_left, vvel_right, i_frac + 0.5f);
         return sf::Vector2f(hvel, vvel);
+    } 
+}
+
+void set_walls_dirichlet_boundary_conditions(float* hvels, float* vvels, const Dimensions& dims, const int* obstacles, const int obstacles_count){
+    const int nx = dims.nx;
+    const int ny = dims.ny;
+    for(int j=0; j<ny; j++){
+        hvels[FLAT(0, j, nx + 1)] = 0.0f;
+        hvels[FLAT(nx, j, nx + 1)] = 0.0f;
     }
-
-
- 
+    for(int i=0; i<nx; i++){
+        vvels[FLAT(i, 0, nx)] = 0.0f;
+        vvels[FLAT(i, ny, nx)] = 0.0f;
+    }
+    for(int obs_i = 0; obs_i < obstacles_count; obs_i++){
+        const int obs_idx = obstacles[obs_i];
+        const int obs_x = obs_idx % nx;
+        const int obs_y = obs_idx / nx;
+        hvels[FLAT(obs_x, obs_y, nx + 1)] = 0.0f;
+        hvels[FLAT(obs_x + 1, obs_y, nx + 1)] = 0.0f;
+        vvels[FLAT(obs_x, obs_y, nx)] = 0.0f;
+        vvels[FLAT(obs_x, obs_y + 1, nx)] = 0.0f;
+    }
+}
+void set_walls_no_slip_boundary_conditions(float* hvels, float* vvels, const Dimensions& dims, const int* obstacles, const int obstacles_count){
+    // To be implemented later
 }
