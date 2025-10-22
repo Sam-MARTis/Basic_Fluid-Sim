@@ -47,7 +47,7 @@ std::vector<bool> walls((NX) * (NY), false);
 bool render_shapes = true;
 float *rand_property = new float[NX * NY];
 static int current_mode = 1;
-const char *modes[] = {"default", "Divergence"};
+const char *modes[] = {"default", "Divergence", "Pressure"};
 static float color1[3] = {1.0f, 0.0f, 0.0f};
 static float color2[3] = {0.0f, 0.0f, 1.0f};
 
@@ -68,7 +68,7 @@ int flow_arrow_thickness = 1;
 float flow_arrow_head_fraction = 0.2f;
 
 float divergence_magnitude_range = 2.0f;
-float pressure_magnitude_range = 2.0f;
+float pressure_magnitude_range = 100.0f;
 
 int DIVERGENCE_ITERATIONS = DIVERGENCE_ITERATIONS_DEFAULT;
 float DT = DT_default;
@@ -164,11 +164,7 @@ int main()
                 // mouse_position_screen = sf::Mouse::getPosition(window);
                 // mouse_x_physics = (float)(mouse_position_screen.x - SCREEN_OFFSET_X) * ((float)SIZE_PHYSICS_X_MAX_default / (float)SCREEN_WIDTH);
                 // mouse_y_physics = (float)(mouse_position_screen.y - SCREEN_OFFSET_Y) * ((float)SIZE_PHYSICS_Y_MAX_default / (float)SCREEN_HEIGHT);
-                set_walls_dirichlet_boundary_conditions(hvels, vvels, sim_dimensions, nullptr, 0);
-                calculate_divergences(hvels, vvels, sim_dimensions, divergences);
-                solve_pressure_for_divergence_free_velocity_field(hvels, vvels, pressures, sim_dimensions, fluid_density, walls, DT, DIVERGENCE_ITERATIONS);
-                apply_pressure_gradient_to_velocity_field(hvels, vvels, pressures, sim_dimensions, fluid_density, DT);
-                set_walls_dirichlet_boundary_conditions(hvels, vvels, sim_dimensions, nullptr, 0);
+ 
             }
         }
         ImGui::SFML::Update(window, deltaClock.restart());
@@ -187,9 +183,6 @@ int main()
         ImGui::NewLine();
         if (solve_pressure_divergence_free)
         {
-            // ImGui::Checkbox("Apply Gravity", &apply_gravity);
-            // if (apply_gravity)
-            // {
             ImGui::Spacing();
             ImGui::Text("Gravity Settings");
             ImGui::InputFloat("g", &gravity_acceleration, 0.1f, 50.0f, "%.3f");
@@ -244,6 +237,15 @@ int main()
             ImGui::ColorEdit3("Color 2", color2);
             ImGui::Spacing();
         }
+        else if (current_mode == DISPLAY_PRESSURE_INDEX)
+        {
+            ImGui::Spacing();
+            ImGui::SliderFloat("Pressure Range", &pressure_magnitude_range, 1.0f, 1000.0f, "%.3f");
+            ImGui::Text("Pressure Color Settings");
+            ImGui::ColorEdit3("Color 1", color1);
+            ImGui::ColorEdit3("Color 2", color2);
+            ImGui::Spacing();
+        }
 
         ImGui::Checkbox("Render Edge Velocities", &render_edge_velocities);
         if (render_edge_velocities)
@@ -287,6 +289,10 @@ int main()
             else if (current_mode == DISPLAY_DEFAULT_INDEX)
             {
                 display_shapes(window, main_shapes, sim_dimensions, nullptr, 0.0f, 1.0f, sf::Color::Red, sf::Color::Blue);
+            }
+            else if (current_mode == DISPLAY_PRESSURE_INDEX)
+            {
+                display_shapes(window, main_shapes, sim_dimensions, pressures, -pressure_magnitude_range, pressure_magnitude_range, convert_float_to_sf_colour(color1), convert_float_to_sf_colour(color2));
             }
         }
         if (render_edge_velocities)

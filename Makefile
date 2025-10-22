@@ -1,10 +1,11 @@
 
 
 CXX := g++
-CXXFLAGS := -Wall  -Wreturn-type -Wno-unused-parameter -Wno-return-type -Wno-narrowing -Wno-unused-result -Wno-unused-but-set-variable -Wno-extra -std=c++20 -O2 \
+CXXFLAGS := -Wall -Wno-everything -std=c++20 -O2 \
             -Iimgui \
             -Iimgui-sfml \
             -I/usr/local/include
+
 
 LDFLAGS := -L/usr/local/lib
 LIBS := -lsfml-graphics -lsfml-window -lsfml-system -lGL -lpthread -ldl
