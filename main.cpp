@@ -1,4 +1,5 @@
 #include <SFML/Graphics.hpp>
+#include <vector>
 #include "aux-functions.hpp"
 #include "constants.hpp"
 #include "display-functions.hpp"
@@ -6,6 +7,7 @@
 #include "imgui.h"
 #include "imgui-SFML.h"
 #include "core-sim-functions.hpp"
+
 
 // FYI, if some quantity is in all caps, it is not supposed to be changed within any function except the settings gui
 
@@ -40,6 +42,7 @@ Might consider direct OpenGL rendering.
 float *hvels = new float[(NX + 1) * NY];
 float *vvels = new float[NX * (NY + 1)];
 float *divergences = new float[NX * NY];
+std::vector<bool> obstacles(NX * NY, false);
 
 
 // GUI variables

@@ -10,7 +10,9 @@
 #define NX_default 16
 #define NY_default 9
 #define SIZE_PHYSICS_X_MAX_default NX_default
-#define SIZE_PHYSICS_Y_MAX_default NY_default
+#define SIZE_PHYSICS_Y_MAX_default NY_default 
+// KEEP IT A SQUARE GRID. In the divergence free pressure solver, I assume square cells. Fix that before changing this.
+
 #define INITIAL_X_VELOCITY_default 0.0f
 #define INITIAL_Y_VELOCITY_default 0.0f
 #define DIVERGENCE_ITERATIONS_DEFAULT 30
