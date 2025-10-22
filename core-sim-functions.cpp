@@ -123,6 +123,7 @@ void set_walls_dirichlet_boundary_conditions(float* hvels, float* vvels, const D
     for(int j=0; j<ny; j++){
         hvels[FLAT(0, j, nx + 1)] = 0.0f;
         hvels[FLAT(nx, j, nx + 1)] = 0.0f;
+
     }
     for(int i=0; i<nx; i++){
         vvels[FLAT(i, 0, nx)] = 0.0f;
@@ -162,7 +163,7 @@ void calculate_divergences(const float* hvels, const float* vvels, const Dimensi
 
 
 #define PRESSURES(i, j, nx, ny) (((i)>=0) && ((i)<(nx)) && ((j)>=0) && ((j)<(ny))) ? pressures[FLAT(i, j, nx)]: 0.0f
-
+inline bool WALLS(int i, int j, const int& nx, const int& ny, const std::vector<bool>& walls) { return (((i)>=0) && ((i)<(nx)) && ((j)>=0) && ((j)<(ny))) ? walls[FLAT(i, j, nx)]: true; }
 void solve_pressure_for_divergence_free_velocity_field(float* hvels, float* vvels, float* pressures, const Dimensions& dims, const float ρ, const std::vector<bool>& walls, const float dt, const int iterations){
     const int nx = dims.nx;
     const int ny = dims.ny;
@@ -179,8 +180,8 @@ void solve_pressure_for_divergence_free_velocity_field(float* hvels, float* vvel
             for(int j=0; j<ny; j++){
                 const int idx = FLAT(i, j, nx);
                 if(walls[idx]==false){
-                    const char num_fluid_left_right = ((char)1 - (char)walls[FLAT(i-1, j, nx)]) + ((char)1 - (char)walls[FLAT(i+1, j, nx)]);
-                    const char num_fluid_top_bottom = ((char)1 - (char)walls[FLAT(i, j-1, nx)]) + ((char)1 - (char)walls[FLAT(i, j+1, nx)]);
+                    const char num_fluid_left_right = ((char)1 - (char)WALLS(i-1, j, nx, ny, walls)) + ((char)1 - (char)WALLS(i+1, j, nx, ny, walls));
+                    const char num_fluid_top_bottom = ((char)1 - (char)WALLS(i, j-1, nx, ny, walls)) + ((char)1 - (char)WALLS(i, j+1, nx, ny, walls));
                     const float den = dy_by_dx * (float)num_fluid_left_right + dx_by_dy * (float)num_fluid_top_bottom;
                     const float Pr = PRESSURES(i + 1, j, nx, ny);
                     const float Pl = PRESSURES(i - 1, j, nx, ny);
@@ -204,4 +205,23 @@ void solve_pressure_for_divergence_free_velocity_field(float* hvels, float* vvel
     }
 }
 
-
+void apply_pressure_gradient_to_velocity_field(float* hvels, float* vvels, const float* pressures, const Dimensions& dims, const float ρ, const float dt){
+    // Remember to apply boundary conditions after this
+    const int nx = dims.nx;
+    const int ny = dims.ny;
+    const float dx = (float)dims.size_physics_x_max / (float)dims.nx;
+    const float dy = (float)dims.size_physics_y_max / (float)dims.ny;
+    const float inv_ρ = 1.0f / ρ;
+    const float kx = dt/(ρ*dx);
+    const float ky = dt/(ρ*dy);
+    for(int j=0; j<ny; j++){
+        for(int i=1; i<nx; i++){
+            // const int idx = 
+            const float P = PRESSURES(i, j, nx, ny);
+            hvels[FLAT(i, j, nx + 1)] -= kx * P;
+            hvels[FLAT(i+1, j, nx + 1)] += kx * P;
+            vvels[FLAT(i, j, nx)] -= ky * P;
+            vvels[FLAT(i, j+1, nx)] += ky * P;
+        }
+    }
+}

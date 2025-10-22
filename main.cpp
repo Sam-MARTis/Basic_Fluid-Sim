@@ -21,8 +21,7 @@ int SCREEN_OFFSET_Y = SCREEN_OFFSET_Y_default;
 int SCREEN_END_X_PADDING = SCREEN_END_X_PADDING_default;
 int SCREEN_END_Y_PADDING = SCREEN_END_Y_PADDING_default;
 
-int DIVERGENCE_ITERATIONS = DIVERGENCE_ITERATIONS_DEFAULT;
-float DT = DT_default;
+
 Dimensions sim_dimensions = {
     NX,
     NY,
@@ -42,7 +41,7 @@ Might consider direct OpenGL rendering.
 float *hvels = new float[(NX + 1) * NY];
 float *vvels = new float[NX * (NY + 1)];
 float *divergences = new float[NX * NY];
-std::vector<bool> obstacles(NX * NY, false);
+std::vector<bool> walls((NX) * (NY), false);
 
 
 // GUI variables
@@ -71,8 +70,12 @@ float flow_arrow_head_fraction = 0.2f;
 
 float divergence_magnitude_range = 2.0f;
 
-sf::RenderWindow window;
 
+int DIVERGENCE_ITERATIONS = DIVERGENCE_ITERATIONS_DEFAULT;
+float DT = DT_default;
+bool solve_pressure_divergence_free = false;
+sf::RenderWindow window;
+float temp_density = 1.225f;
 int main()
 {
     window.create(sf::VideoMode({SCREEN_WIDTH + (SCREEN_OFFSET_X + SCREEN_END_X_PADDING), SCREEN_HEIGHT + (SCREEN_OFFSET_Y + SCREEN_END_Y_PADDING)}, 10), "Fluid Simulation");
@@ -95,16 +98,16 @@ int main()
         rand_property[i] = randf(0.0f, 1.0f);
     }
 
-    for(int i=0; i< NX; i++){
-        obstacles[FLAT(i, 0, NX)] = true;
-        obstacles[FLAT(i, NY-1, NX)] = true;
-    }
-    for(int j=0; j< NY; j++){
-        obstacles[FLAT(0, j, NX)] = true;
-        obstacles[FLAT(NX-1, j, NX)] = true;
-    }
+    // for(int i=0; i< NX; i++){
+    //     obstacles[FLAT(i, 0, NX)] = true;
+    //     obstacles[FLAT(i, NY-1, NX)] = true;
+    // }
+    // for(int j=0; j< NY; j++){
+    //     obstacles[FLAT(0, j, NX)] = true;
+    //     obstacles[FLAT(NX-1, j, NX)] = true;
+    // }
 
-    
+
     // Okay, render loop. We got this
     float mouse_x_physics = SIZE_PHYSICS_X_MAX_default / 2.0f;
     float mouse_y_physics = SIZE_PHYSICS_Y_MAX_default / 2.0f;
