@@ -215,7 +215,7 @@ void apply_pressure_gradient_to_velocity_field(float* hvels, float* vvels, const
     const float kx = dt/(ρ*dx);
     const float ky = dt/(ρ*dy);
     for(int j=0; j<ny; j++){
-        for(int i=1; i<nx; i++){
+        for(int i=0; i<nx; i++){
             // const int idx = 
             const float P = PRESSURES(i, j, nx, ny);
             hvels[FLAT(i, j, nx + 1)] -= kx * P;

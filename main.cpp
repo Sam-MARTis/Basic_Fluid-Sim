@@ -41,6 +41,7 @@ Might consider direct OpenGL rendering.
 float *hvels = new float[(NX + 1) * NY];
 float *vvels = new float[NX * (NY + 1)];
 float *divergences = new float[NX * NY];
+float *pressures = new float[NX * NY];
 std::vector<bool> walls((NX) * (NY), false);
 
 
@@ -77,7 +78,7 @@ bool solve_pressure_divergence_free = false;
 sf::RenderWindow window;
 float temp_density = 1.225f;
 int main()
-{
+{   
     window.create(sf::VideoMode({SCREEN_WIDTH + (SCREEN_OFFSET_X + SCREEN_END_X_PADDING), SCREEN_HEIGHT + (SCREEN_OFFSET_Y + SCREEN_END_Y_PADDING)}, 10), "Fluid Simulation");
     window.setFramerateLimit(FRAME_RATE_LIMIT);
     ImGui::SFML::Init(window);
@@ -97,7 +98,10 @@ int main()
     {
         rand_property[i] = randf(0.0f, 1.0f);
     }
-
+    for (int i = 0; i < NX * NY; i++)
+    {
+        pressures[i] = 0.0f;
+    }
     // for(int i=0; i< NX; i++){
     //     obstacles[FLAT(i, 0, NX)] = true;
     //     obstacles[FLAT(i, NY-1, NX)] = true;
@@ -132,12 +136,17 @@ int main()
                     window.close();
                 }
             }
-            else if (event->is<sf::Event::MouseButtonPressed>())
+            else if (event->is<sf::Event::MouseWheelScrolled>())
             {
-                mouse_position_screen = sf::Mouse::getPosition(window);
-                mouse_x_physics = (float)(mouse_position_screen.x - SCREEN_OFFSET_X) * ((float)SIZE_PHYSICS_X_MAX_default / (float)SCREEN_WIDTH);
-                mouse_y_physics = (float)(mouse_position_screen.y - SCREEN_OFFSET_Y) * ((float)SIZE_PHYSICS_Y_MAX_default / (float)SCREEN_HEIGHT);
-
+                // mouse_position_screen = sf::Mouse::getPosition(window);
+                // mouse_x_physics = (float)(mouse_position_screen.x - SCREEN_OFFSET_X) * ((float)SIZE_PHYSICS_X_MAX_default / (float)SCREEN_WIDTH);
+                // mouse_y_physics = (float)(mouse_position_screen.y - SCREEN_OFFSET_Y) * ((float)SIZE_PHYSICS_Y_MAX_default / (float)SCREEN_HEIGHT);
+                set_walls_dirichlet_boundary_conditions(hvels, vvels, sim_dimensions, nullptr, 0);
+                calculate_divergences(hvels, vvels, sim_dimensions, divergences);
+                solve_pressure_for_divergence_free_velocity_field(hvels, vvels, pressures, sim_dimensions, temp_density, walls, DT, DIVERGENCE_ITERATIONS);
+                apply_pressure_gradient_to_velocity_field(hvels, vvels, pressures, sim_dimensions, temp_density, DT);
+                set_walls_dirichlet_boundary_conditions(hvels, vvels, sim_dimensions, nullptr, 0);
+                
             }
         }
         ImGui::SFML::Update(window, deltaClock.restart());
