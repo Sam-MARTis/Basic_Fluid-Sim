@@ -324,3 +324,21 @@ void advect_velocities(float *hvels, float *vvels, const Dimensions &dims, const
     delete[] temp_hvels;
     delete[] temp_vvels;
 }
+
+void apply_gravity_to_velocity_field(float *vvels, const Dimensions &dims, const std::vector<bool> &walls, const float g, const float dt)
+{
+    const int nx = dims.nx;
+    const int ny = dims.ny;
+    const float g_dt = g * dt;
+    for (int i = 0; i < nx; i++)
+    {
+        for (int j = 1; j < ny ; j++)
+        {
+            const int idx = FLAT(i, j, nx);
+            if (!walls[idx])
+            {
+                vvels[idx] += g_dt;
+            }
+        }
+    }
+}

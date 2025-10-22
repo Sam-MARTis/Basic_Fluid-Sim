@@ -68,11 +68,15 @@ int flow_arrow_thickness = 1;
 float flow_arrow_head_fraction = 0.2f;
 
 float divergence_magnitude_range = 2.0f;
+float pressure_magnitude_range = 2.0f;
 
 int DIVERGENCE_ITERATIONS = DIVERGENCE_ITERATIONS_DEFAULT;
 float DT = DT_default;
 float fluid_density = 1.225f;
 bool solve_pressure_divergence_free = false;
+
+bool apply_gravity = false;
+float gravity_acceleration = 9.81f;
 
 int current_iterator = RK4_INDEX;
 const char *iterators[] = {"RK2", "RK4"};
@@ -124,14 +128,21 @@ int main()
     {
         if (solve_pressure_divergence_free)
         {
+            if(apply_gravity) {
+                apply_gravity_to_velocity_field(vvels, sim_dimensions, walls, gravity_acceleration, DT);
+                // set_walls_dirichlet_boundary_conditions(hvels, vvels, sim_dimensions, nullptr, 0);
+                
+            }
+            set_walls_dirichlet_boundary_conditions(hvels, vvels, sim_dimensions, nullptr, 0);
+            calculate_divergences(hvels, vvels, sim_dimensions, divergences);
             solve_pressure_for_divergence_free_velocity_field(hvels, vvels, pressures, sim_dimensions, fluid_density, walls, DT, DIVERGENCE_ITERATIONS);
             apply_pressure_gradient_to_velocity_field(hvels, vvels, pressures, sim_dimensions, fluid_density, DT);
             set_walls_dirichlet_boundary_conditions(hvels, vvels, sim_dimensions, nullptr, 0);
             calculate_divergences(hvels, vvels, sim_dimensions, divergences);
+
             if(advect_velocity_field) {
-                advect_velocities(hvels, vvels, sim_dimensions, walls, DT, current_iterator);
-                set_walls_dirichlet_boundary_conditions(hvels, vvels, sim_dimensions, nullptr, 0);
-                calculate_divergences(hvels, vvels, sim_dimensions, divergences);
+                advect_velocities(hvels, vvels, sim_dimensions, walls, DT, current_iterator); 
+                set_walls_dirichlet_boundary_conditions(hvels, vvels, sim_dimensions, nullptr, 0);               
             }
         }
         while (const std::optional<sf::Event> event = window.pollEvent())
@@ -176,6 +187,18 @@ int main()
         ImGui::NewLine();
         if (solve_pressure_divergence_free)
         {
+            // ImGui::Checkbox("Apply Gravity", &apply_gravity);
+            // if (apply_gravity)
+            // {
+            ImGui::Spacing();
+            ImGui::Text("Gravity Settings");
+            ImGui::InputFloat("g", &gravity_acceleration, 0.1f, 50.0f, "%.3f");
+            ImGui::SameLine();
+            ImGui::Checkbox("Apply##Gravity", &apply_gravity);
+
+            ImGui::Spacing();
+            ImGui::Spacing();
+            
             ImGui::Text("Advection Solver");
             if (ImGui::BeginCombo("Iterator", iterators[current_iterator]))
             {
