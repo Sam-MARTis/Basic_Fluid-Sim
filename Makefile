@@ -1,7 +1,7 @@
 
 
 CXX := g++
-CXXFLAGS := -Wall -Wextra -Wreturn-type -Wno-unused-parameter -Wno-return-type -Wno-narrowing -Wno-unused-result -Wno-unused-but-set-variable -Wno-extra -std=c++20 -O2 \
+CXXFLAGS := -Wall  -Wreturn-type -Wno-unused-parameter -Wno-return-type -Wno-narrowing -Wno-unused-result -Wno-unused-but-set-variable -Wno-extra -std=c++20 -O2 \
             -Iimgui \
             -Iimgui-sfml \
             -I/usr/local/include

@@ -321,7 +321,6 @@ void advect_velocities(float *hvels, float *vvels, const Dimensions &dims, const
         vvels[i] = temp_vvels[i];
     }
     
-    const int nx = dims.nx;
     delete[] temp_hvels;
     delete[] temp_vvels;
 }

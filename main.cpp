@@ -128,6 +128,11 @@ int main()
             apply_pressure_gradient_to_velocity_field(hvels, vvels, pressures, sim_dimensions, fluid_density, DT);
             set_walls_dirichlet_boundary_conditions(hvels, vvels, sim_dimensions, nullptr, 0);
             calculate_divergences(hvels, vvels, sim_dimensions, divergences);
+            if(advect_velocity_field) {
+                advect_velocities(hvels, vvels, sim_dimensions, walls, DT, current_iterator);
+                set_walls_dirichlet_boundary_conditions(hvels, vvels, sim_dimensions, nullptr, 0);
+                calculate_divergences(hvels, vvels, sim_dimensions, divergences);
+            }
         }
         while (const std::optional<sf::Event> event = window.pollEvent())
         {

@@ -7,4 +7,4 @@ void set_walls_dirichlet_boundary_conditions(float* hvels, float* vvels, const D
 void calculate_divergences(const float* hvels, const float* vvels, const Dimensions& dims, float *divergences);
 void solve_pressure_for_divergence_free_velocity_field(float* hvels, float* vvels, float* pressures, const Dimensions& dims, const float ρ, const std::vector<bool>& walls, const float dt, const int iterations);
 void apply_pressure_gradient_to_velocity_field(float* hvels, float* vvels, const float* pressures, const Dimensions& dims, const float ρ, const float dt);
-void advect_velocities(float* hvels, float* vvels, const Dimensions& dims, const float dt, const int iterator_type);
+void advect_velocities(float *hvels, float *vvels, const Dimensions &dims, const std::vector<bool> &walls, const float dt, const int iterator_type);
