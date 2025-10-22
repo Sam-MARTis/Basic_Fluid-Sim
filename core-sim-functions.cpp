@@ -81,17 +81,9 @@ sf::Vector2f find_velocity_at_point(sf::Vector2f phys_position, const  float* hv
         hvel_2 = HVELS(i + 1, j, nx, ny);
         hvel_3 = HVELS(i, j + 1, nx, ny);
         hvel_4 = HVELS(i + 1, j + 1, nx, ny);
-        std::cout << "\n\nInterpolated hvel: " << hvel << ", vvel: " << vvel << "\n";
-        std::cout << "At cell i: " << i << ", j: " << j << ", i_frac: " << i_frac << ", j_frac: " << j_frac << "\n";
-        std::cout << "Hvels: " << hvel_1 << ", " << hvel_2 << ", " << hvel_3 << ", " << hvel_4 << "\n";
         hvel_top = INTERPOLATE(hvel_1, hvel_2, i_frac);
-        std::cout << "hvel_top: " << hvel_top << "\n";
         hvel_bottom = INTERPOLATE(hvel_3, hvel_4, i_frac);
-        std::cout << "hvel_bottom: " << hvel_bottom << "\n";
         hvel = INTERPOLATE(hvel_top, hvel_bottom, j_frac - 0.5f);
-        std::cout << "j_frac - 0.5f: " << j_frac - 0.5f << "\n";
-        std::cout << "Interpolate(" << hvel_top << ", " << hvel_bottom << ", " << j_frac - 0.5f << "): " << INTERPOLATE(hvel_top, hvel_bottom, j_frac - 0.5f) << "\n";
-        std::cout << "HVel: " << hvel << "\n\n";
 
         vvel_1 = VVELS(i-1, j, nx, ny);
         vvel_2 = VVELS(i, j, nx, ny);
@@ -100,20 +92,6 @@ sf::Vector2f find_velocity_at_point(sf::Vector2f phys_position, const  float* hv
         vvel_left = INTERPOLATE(vvel_1, vvel_3, j_frac);
         vvel_right = INTERPOLATE(vvel_2, vvel_4, j_frac);
         vvel = INTERPOLATE(vvel_left, vvel_right, i_frac + 0.5f);
-
-        // std::cout << "Interpolated hvel: " << hvel << ", vvel: " << vvel << "\n";
-        // std::cout << "Mode: " << 2*(int)left + 1*(int)top << "\n";
-        // std::cout << "At cell i: " << i << ", j: " << j << ", i_frac: " << i_frac << ", j_frac: " << j_frac << "\n";
-        // std::cout << "Using cells: \n";
-        // std::cout << "Hvels: " << hvel_1 << ", " << hvel_2 << ", " << hvel_3 << ", " << hvel_4 << "\n";
-        // std::cout << "Vvels: " << vvel_1 << ", " << vvel_2 << ", " << vvel_3 << ", " << vvel_4 << "\n";
-        // std::cout << "Hvel top: " << hvel_top << ", bottom: " << hvel_bottom << "\n";
-        // std::cout << "HVel: " << hvel << "\n";
-        // std::cout << "Vvel left: " << vvel_left << ", right: " << vvel_right << "\n";
-        // std::cout << "VVel: " << vvel << "\n";
-        // std::cout << "j_frac - 0.5f: " << j_frac - 0.5f << "\n";
-        // std::cout << "INTERPOLATE(0.639917, 0, 0.0999994): " << INTERPOLATE(0.639917, 0, 0.0999994f) << "\n";
-        
         return sf::Vector2f(hvel, vvel);
 
 

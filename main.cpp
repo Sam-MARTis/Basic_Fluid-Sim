@@ -166,12 +166,8 @@ int main()
         {
             display_edge_velocities(window, hvels, vvels, sim_dimensions, arrow_normalization, arrow_max_size, arrow_thickness, head_fraction, convert_float_to_sf_colour(arrow_color));
         }
-        // sf::Vector2f test_point = sf::Vector2f(SIZE_PHYSICS_X_MAX_default * 0.58f, SIZE_PHYSICS_Y_MAX_default * 0.59f);
         sf::Vector2f test_point = sf::Vector2f(mouse_x_physics, mouse_y_physics);
         sf::Vector2f velocity_at_test_point = find_velocity_at_point(test_point, hvels, vvels, sim_dimensions);
-        std::cout << "Velocity at point (" << test_point.x << ", " << test_point.y << "): ("
-                  << velocity_at_test_point.x << ", " << velocity_at_test_point.y << ")\n";
-        // sf::Vector2f screen_test_point = sf::Vector2f(SCREEN_OFFSET_X + (test_point.x * SCREEN_WIDTH / SIZE_PHYSICS_X_MAX_default),  SCREEN_OFFSET_Y + (test_point.y * SCREEN_HEIGHT / SIZE_PHYSICS_Y_MAX_default));
         sf::Vector2f screen_test_point = sf::Vector2f(SCREEN_OFFSET_X + (test_point.x * SCREEN_WIDTH / SIZE_PHYSICS_X_MAX_default),  SCREEN_OFFSET_Y + (test_point.y * SCREEN_HEIGHT / SIZE_PHYSICS_Y_MAX_default));
         sf::Vector2f screen_velocity_at_test_point = sf::Vector2f(velocity_at_test_point.x * SCREEN_WIDTH / SIZE_PHYSICS_X_MAX_default, velocity_at_test_point.y * SCREEN_HEIGHT / SIZE_PHYSICS_Y_MAX_default);
         drawArrow(window, screen_test_point, screen_test_point + screen_velocity_at_test_point, 2, 0.3f, sf::Color::Yellow);
