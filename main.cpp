@@ -82,6 +82,10 @@ int current_iterator = RK4_INDEX;
 const char *iterators[] = {"RK2", "RK4"};
 bool advect_velocity_field = false;
 sf::RenderWindow window;
+sf::Vector2i mouse_previous_screen_pos;
+bool is_mouse_dragging = false;
+float dt_inner = 0.016f;
+
 int main()
 {
     window.create(sf::VideoMode({SCREEN_WIDTH + (SCREEN_OFFSET_X + SCREEN_END_X_PADDING), SCREEN_HEIGHT + (SCREEN_OFFSET_Y + SCREEN_END_Y_PADDING)}, 10), "Fluid Simulation");
@@ -159,6 +163,35 @@ int main()
                     window.close();
                 }
             }
+            else if (event->is<sf::Event::MouseButtonPressed>())
+            {
+                mouse_previous_screen_pos = sf::Mouse::getPosition(window);
+                is_mouse_dragging = true;
+            }
+            else if (event->is<sf::Event::MouseButtonReleased>())
+            {
+                is_mouse_dragging = false;
+            }
+            else if (event->is<sf::Event::MouseMoved>())
+            {
+                if (is_mouse_dragging)
+                {
+                    sf::Vector2i mouse_current_screen_pos = sf::Mouse::getPosition(window);
+                    sf::Vector2i mouse_delta_screen_pos = mouse_current_screen_pos - mouse_previous_screen_pos;
+                    sf::Vector2f mouse_current_physics_pos = sf::Vector2f(
+                        (float)((mouse_current_screen_pos.x - SCREEN_OFFSET_X) * ((float)SIZE_PHYSICS_X_MAX_default / (float)SCREEN_WIDTH)),
+                        (float)((mouse_current_screen_pos.y - SCREEN_OFFSET_Y) * ((float)SIZE_PHYSICS_Y_MAX_default / (float)SCREEN_HEIGHT)));
+                        const float slowdown = 0.1;
+                    sf::Vector2f mouse_velocity_physics = sf::Vector2f(slowdown*(float)mouse_delta_screen_pos.x * ((float)SIZE_PHYSICS_X_MAX_default / (float)SCREEN_WIDTH), slowdown*(float)mouse_delta_screen_pos.y * ((float)SIZE_PHYSICS_Y_MAX_default / (float)SCREEN_HEIGHT)) / dt_inner;
+
+                    impart_velocity_to_fluid_field(hvels, vvels, sim_dimensions, mouse_current_physics_pos.x, mouse_current_physics_pos.y, 0.01f, mouse_velocity_physics);
+                    // int mouse_x_cell = (int)((float)(mouse_current_screen_pos.x - SCREEN_OFFSET_X) * ((float)SIZE_PHYSICS_X_MAX_default / (float)SCREEN_WIDTH));
+                    // int mouse_y_cell = (int)((float)(mouse_current_screen_pos.y - SCREEN_OFFSET_Y) * ((float)SIZE_PHYSICS_Y_MAX_default / (float)SCREEN_HEIGHT));
+                    // const int lower_idx = clamp(mouse_x_cell, 0, NX - 1) + clamp(mouse_y_cell, 0, NY - 1) * NX;
+                    // // Handle mouse dragging
+                    // mouse_previous_screen_pos = mouse_current_screen_pos;
+                }
+            }
             else if (event->is<sf::Event::MouseWheelScrolled>())
             {
                 // mouse_position_screen = sf::Mouse::getPosition(window);
@@ -167,7 +200,8 @@ int main()
  
             }
         }
-        ImGui::SFML::Update(window, deltaClock.restart());
+        dt_inner = deltaClock.restart().asSeconds();
+        ImGui::SFML::Update(window, sf::seconds(dt_inner));
         ImGui::Begin("Settings");
         ImGui::Spacing();
         ImGui::Text("Main Params");
