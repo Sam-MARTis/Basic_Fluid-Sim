@@ -7,10 +7,11 @@
 #define FLAT(x, y, width) ((y) * (width) + (x))
 
 
-#define NX_default 16
-#define NY_default 9
-#define SIZE_PHYSICS_X_MAX_default NX_default
-#define SIZE_PHYSICS_Y_MAX_default NY_default 
+#define SIZE_PHYSICS_X_MAX_default 16
+#define SIZE_PHYSICS_Y_MAX_default 9 
+#define DENSITY_CELLS 10
+#define NX_default SIZE_PHYSICS_X_MAX_default * DENSITY_CELLS
+#define NY_default SIZE_PHYSICS_Y_MAX_default * DENSITY_CELLS
 // KEEP IT A SQUARE GRID. In the divergence free pressure solver, I assume square cells. Fix that before changing this.
 
 #define INITIAL_X_VELOCITY_default 0.0f

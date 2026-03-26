@@ -274,7 +274,7 @@ int main()
         else if (current_mode == DISPLAY_PRESSURE_INDEX)
         {
             ImGui::Spacing();
-            ImGui::SliderFloat("Pressure Range", &pressure_magnitude_range, 1.0f, 1000.0f, "%.3f");
+            ImGui::SliderFloat("Pressure Range", &pressure_magnitude_range, 0.1f, 500.0f, "%.3f");
             ImGui::Text("Pressure Color Settings");
             ImGui::ColorEdit3("Color 1", color1);
             ImGui::ColorEdit3("Color 2", color2);

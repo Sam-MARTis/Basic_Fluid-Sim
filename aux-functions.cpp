@@ -2,6 +2,7 @@
 #include "aux-functions.hpp" 
 #include "constants.hpp"
 #include<SFML/Graphics.hpp>
+#include<math.h>
 
 
 // const float PHYSICS_SCREEN_X_RATIO = SIZE_PHYSICS_X_MAX / SCREEN_WIDTH;
@@ -55,19 +56,24 @@ void impart_velocity_to_fluid_field(float *hvels, float *vvels, const Dimensions
     const int ny = dims.ny;
     const float cell_x = (float)dims.size_physics_x_max / (float)dims.nx;
     const float cell_y = (float)dims.size_physics_y_max / (float)dims.ny;
-    const int center_idx_x = (int)(center_x / cell_x);
-    const int center_idx_y = (int)(center_y / cell_y);
-    const int lower_x_idx = clamp( (int)(center_x - radius)/cell_x, 0, nx);
-    const int upper_x_idx = clamp( (int)(center_x + radius)/cell_x, 0, nx);
-    const int lower_y_idx = clamp( (int)(center_y - radius)/cell_y, 0, ny);
-    const int upper_y_idx = clamp( (int)(center_y + radius)/cell_y, 0, ny);
+    const int center_idx_x = ceil(center_x / cell_x);
+    const int center_idx_y = ceil(center_y / cell_y);
+    const int lower_x_idx = clamp(floor((center_x - radius) / cell_x), 0, nx);
+    const int upper_x_idx = clamp(floor((center_x + radius) / cell_x), 0, nx);
+    const int lower_y_idx = clamp(floor((center_y - radius) / cell_y), 0, ny);
+    const int upper_y_idx = clamp(floor((center_y + radius) / cell_y), 0, ny);
 
     for(int j = lower_y_idx; j <= upper_y_idx; j++){
         for(int i = lower_x_idx; i <= upper_x_idx; i++){
             hvels[FLAT(i, j, nx + 1)] = velocity.x;
             hvels[FLAT(i+1, j, nx + 1)] = velocity.x;
+            hvels[FLAT(i, j+1, nx + 1)] = velocity.x;
+            hvels[FLAT(i+1, j+1, nx + 1)] = velocity.x;
             vvels[FLAT(i, j, nx)] = velocity.y;
             vvels[FLAT(i, j+1, nx)] = velocity.y;
+            vvels[FLAT(i+1, j, nx)] = velocity.y;
+            vvels[FLAT(i+1, j+1, nx)] = velocity.y;
+            
         }
     }
 
