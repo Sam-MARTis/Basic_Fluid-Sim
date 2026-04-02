@@ -1,14 +1,16 @@
 
 
-CXX := g++
-CXXFLAGS := -Wall -Wno-everything -std=c++20 -O2 \
+CXX ?= g++
+SFML_CFLAGS := $(shell pkg-config --cflags sfml-graphics sfml-window sfml-system)
+SFML_LIBS := $(shell pkg-config --libs sfml-graphics sfml-window sfml-system)
+
+CXXFLAGS := -Wall -std=c++20 -O2 \
+            $(SFML_CFLAGS) \
             -Iimgui \
-            -Iimgui-sfml \
-            -I/usr/local/include
+            -Iimgui-sfml
 
-
-LDFLAGS := -L/usr/local/lib
-LIBS := -lsfml-graphics -lsfml-window -lsfml-system -lGL -lpthread -ldl
+LDFLAGS :=
+LIBS := $(SFML_LIBS) -lGL -lpthread -ldl
 
 TARGET := fluid_sim
 

@@ -1,0 +1,7 @@
+{
+	"InstallScripts" : 
+	[
+		"/home/odin/Code/FluidSim/CPP_Eulerlian-Fluid-Sim/build/cmake_install.cmake"
+	],
+	"Parallel" : false
+}
