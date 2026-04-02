@@ -1,5 +1,5 @@
 # Pressure Projection Solver
-
+![Waves_01](Images/Waves_01.png)
 ## How to run:
 ### With Makefile on Linux
 1. Build it:
@@ -37,8 +37,23 @@ This path uses `pkg-config` for SFML, so it is less tied to `/usr/local` and sho
 ### Notes
 - The project currently builds the CPU/SFML path only.
 - CUDA support is still under development and is not included in this build.
+## How to use
+ - To run the sim properly, turn on the divergence solver.
+- Next, turn on the advection solver.
+For a better (according to be) aesthetic display, check off `Render Shapes` option
+![Settings_Menu](Images/Settings.png)
+- Increase the iterations of the divergence solver will make the fluid more incompressible, also having the side effect of speeding up any pressure/velocity waves you generate. 
 
+- You can generate waves by dragging the mouse along the simulation
 
+Before divergence solver:
+![BeforeDivergenceSolve](Images/BeforeDivergenceSolve.png)
+After divergence solver:
+![AfterDivergenceSolve](Images/AfterDivergenceSolve.png)
+After advection solver:
+![AfterAdvectionSolve](Images/AfterAdvectionSolve.png)
+Make waves with your mouse!
+![Wavessss](Images/Waves_02.png)
 ## Specifications
 - Inviscid fluid solver
 - MAC grid for storing velocities
@@ -50,3 +65,4 @@ This path uses `pkg-config` for SFML, so it is less tied to `/usr/local` and sho
   - Flow fields
   - Cell pressure
   - Cell Divergence 
+  

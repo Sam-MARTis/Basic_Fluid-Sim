@@ -51,7 +51,7 @@ const char *modes[] = {"default", "Divergence", "Pressure"};
 static float color1[3] = {1.0f, 0.0f, 0.0f};
 static float color2[3] = {0.0f, 0.0f, 1.0f};
 
-bool render_edge_velocities = true;
+bool render_edge_velocities = false;
 int arrow_thickness = 2;
 float head_fraction = 0.3f;
 float arrow_normalization = 2.0f;
