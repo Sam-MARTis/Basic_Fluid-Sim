@@ -40,7 +40,9 @@ This path uses `pkg-config` for SFML, so it is less tied to `/usr/local` and sho
 ## How to use
  - To run the sim properly, turn on the divergence solver.
 - Next, turn on the advection solver.
-For a better (according to be) aesthetic display, check off `Render Shapes` option
+For a better (according to me) aesthetic display, check off `Render Shapes` option
+
+
 ![Settings_Menu](Images/Settings.png)
 - Increase the iterations of the divergence solver will make the fluid more incompressible, also having the side effect of speeding up any pressure/velocity waves you generate. 
 
