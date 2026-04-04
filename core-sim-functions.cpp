@@ -182,34 +182,70 @@ void solve_pressure_for_divergence_free_velocity_field(float *hvels, float *vvel
     const float dx_by_dt = dx / dt;
     const float dy_by_dt = dy / dt;
     const float inv_dx2 = 1.0f / (dx * dx);
+    
+    
     for (int iter = 0; iter < iterations; iter++)
     {
-        // It is assumed that all boundary cells are walls
+        // Process odd parity cells (i + j = odd)
         for (int i = 0; i < nx; i++)
         {
             for (int j = 0; j < ny; j++)
             {
-                const int idx = FLAT(i, j, nx);
-                if (walls[idx] == false)
+                if ((i + j) % 2 == 1)  // Odd parity
                 {
-                    const char num_fluid_left_right = ((char)1 - (char)WALLS(i - 1, j, nx, ny, walls)) + ((char)1 - (char)WALLS(i + 1, j, nx, ny, walls));
-                    const char num_fluid_top_bottom = ((char)1 - (char)WALLS(i, j - 1, nx, ny, walls)) + ((char)1 - (char)WALLS(i, j + 1, nx, ny, walls));
-                    const float den = dy_by_dx * (float)num_fluid_left_right + dx_by_dy * (float)num_fluid_top_bottom;
-                    const float Pr = PRESSURES(i + 1, j, nx, ny);
-                    const float Pl = PRESSURES(i - 1, j, nx, ny);
-                    const float Pu = PRESSURES(i, j - 1, nx, ny);
-                    const float Pd = PRESSURES(i, j + 1, nx, ny);
-                    const float hvel_r = HVELS(i + 1, j, nx, ny);
-                    const float hvel_l = HVELS(i, j, nx, ny);
-                    const float vvel_u = VVELS(i, j, nx, ny);
-                    const float vvel_d = VVELS(i, j + 1, nx, ny);
-                    const float rhs = (Pr + Pl) * dy_by_dx + (Pd + Pu) * dx_by_dy + ρ * ((vvel_u - vvel_d) * dx_by_dt + (hvel_l - hvel_r) * dy_by_dt);
-                    pressures[idx] = rhs / den;
+                    const int idx = FLAT(i, j, nx);
+                    if (walls[idx] == false)
+                    {
+                        const char num_fluid_left_right = ((char)1 - (char)WALLS(i - 1, j, nx, ny, walls)) + ((char)1 - (char)WALLS(i + 1, j, nx, ny, walls));
+                        const char num_fluid_top_bottom = ((char)1 - (char)WALLS(i, j - 1, nx, ny, walls)) + ((char)1 - (char)WALLS(i, j + 1, nx, ny, walls));
+                        const float den = dy_by_dx * (float)num_fluid_left_right + dx_by_dy * (float)num_fluid_top_bottom;
+                        const float Pr = PRESSURES(i + 1, j, nx, ny);
+                        const float Pl = PRESSURES(i - 1, j, nx, ny);
+                        const float Pu = PRESSURES(i, j - 1, nx, ny);
+                        const float Pd = PRESSURES(i, j + 1, nx, ny);
+                        const float hvel_r = HVELS(i + 1, j, nx, ny);
+                        const float hvel_l = HVELS(i, j, nx, ny);
+                        const float vvel_u = VVELS(i, j, nx, ny);
+                        const float vvel_d = VVELS(i, j + 1, nx, ny);
+                        const float rhs = (Pr + Pl) * dy_by_dx + (Pd + Pu) * dx_by_dy + ρ * ((vvel_u - vvel_d) * dx_by_dt + (hvel_l - hvel_r) * dy_by_dt);
+                        pressures[idx] = rhs / den;
+                    }
+                    else
+                    {
+                        pressures[idx] = 0.0f;
+                    }
                 }
-                else
+            }
+        }
+        
+        
+        for (int i = 0; i < nx; i++)
+        {
+            for (int j = 0; j < ny; j++)
+            {
+                if ((i + j) % 2 == 0)  
                 {
-                    pressures[idx] = 0.0f;
-                    continue;
+                    const int idx = FLAT(i, j, nx);
+                    if (walls[idx] == false)
+                    {
+                        const char num_fluid_left_right = ((char)1 - (char)WALLS(i - 1, j, nx, ny, walls)) + ((char)1 - (char)WALLS(i + 1, j, nx, ny, walls));
+                        const char num_fluid_top_bottom = ((char)1 - (char)WALLS(i, j - 1, nx, ny, walls)) + ((char)1 - (char)WALLS(i, j + 1, nx, ny, walls));
+                        const float den = dy_by_dx * (float)num_fluid_left_right + dx_by_dy * (float)num_fluid_top_bottom;
+                        const float Pr = PRESSURES(i + 1, j, nx, ny);
+                        const float Pl = PRESSURES(i - 1, j, nx, ny);
+                        const float Pu = PRESSURES(i, j - 1, nx, ny);
+                        const float Pd = PRESSURES(i, j + 1, nx, ny);
+                        const float hvel_r = HVELS(i + 1, j, nx, ny);
+                        const float hvel_l = HVELS(i, j, nx, ny);
+                        const float vvel_u = VVELS(i, j, nx, ny);
+                        const float vvel_d = VVELS(i, j + 1, nx, ny);
+                        const float rhs = (Pr + Pl) * dy_by_dx + (Pd + Pu) * dx_by_dy + ρ * ((vvel_u - vvel_d) * dx_by_dt + (hvel_l - hvel_r) * dy_by_dt);
+                        pressures[idx] = rhs / den;
+                    }
+                    else
+                    {
+                        pressures[idx] = 0.0f;
+                    }
                 }
             }
         }
@@ -290,7 +326,7 @@ void advect_velocities(float *hvels, float *vvels, const Dimensions &dims, const
             {
                 sf::Vector2f p1 = sf::Vector2f(((float)i + 0.5f) * cell_x, (float)j * cell_y);
                 if (iterator_type == RK4_INDEX)
-                { // RK4
+                {
                     sf::Vector2f k1 = find_velocity_at_point(p1, hvels, vvels, dims);
                     sf::Vector2f p2 = p1 - 0.5f * dt * k1;
                     sf::Vector2f k2 = find_velocity_at_point(p2, hvels, vvels, dims);
@@ -302,7 +338,7 @@ void advect_velocities(float *hvels, float *vvels, const Dimensions &dims, const
                     temp_vvels[FLAT(i, j, nx)] = vel.y;
                 }
                 else if (iterator_type == RK2_INDEX)
-                { // RK2
+                { 
                     sf::Vector2f k1 = find_velocity_at_point(p1, hvels, vvels, dims);
                     sf::Vector2f p2 = p1 - 0.5f * dt * k1;
                     sf::Vector2f k2 = find_velocity_at_point(p2, hvels, vvels, dims);
@@ -313,7 +349,7 @@ void advect_velocities(float *hvels, float *vvels, const Dimensions &dims, const
         }
     }     
 
-    // Copy temp arrays to original arrays at the end
+    
     for (int i=0; i< (nx +1)* ny; i++){
         hvels[i] = temp_hvels[i];
     }

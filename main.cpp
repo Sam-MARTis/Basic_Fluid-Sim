@@ -74,6 +74,7 @@ int DIVERGENCE_ITERATIONS = DIVERGENCE_ITERATIONS_DEFAULT;
 float DT = DT_default;
 float fluid_density = 1.225f;
 bool solve_pressure_divergence_free = false;
+bool parallelize_divergence_solve_cuda = false;
 
 bool apply_gravity = false;
 float gravity_acceleration = 9.81f;
@@ -134,12 +135,20 @@ int main()
         {
             if(apply_gravity) {
                 apply_gravity_to_velocity_field(vvels, sim_dimensions, walls, gravity_acceleration, DT);
-                // set_walls_dirichlet_boundary_conditions(hvels, vvels, sim_dimensions, nullptr, 0);
-                
             }
             set_walls_dirichlet_boundary_conditions(hvels, vvels, sim_dimensions, nullptr, 0);
             calculate_divergences(hvels, vvels, sim_dimensions, divergences);
-            solve_pressure_for_divergence_free_velocity_field(hvels, vvels, pressures, sim_dimensions, fluid_density, walls, DT, DIVERGENCE_ITERATIONS);
+            
+            
+            if (parallelize_divergence_solve_cuda)
+            {
+                pressure_solver_kernel_launcher(pressures, hvels, vvels, sim_dimensions, fluid_density, walls, DT, DIVERGENCE_ITERATIONS);
+            }
+            else
+            {
+                solve_pressure_for_divergence_free_velocity_field(hvels, vvels, pressures, sim_dimensions, fluid_density, walls, DT, DIVERGENCE_ITERATIONS);
+            }
+            
             apply_pressure_gradient_to_velocity_field(hvels, vvels, pressures, sim_dimensions, fluid_density, DT);
             set_walls_dirichlet_boundary_conditions(hvels, vvels, sim_dimensions, nullptr, 0);
             calculate_divergences(hvels, vvels, sim_dimensions, divergences);
@@ -214,6 +223,7 @@ int main()
         ImGui::InputInt("Iter", &DIVERGENCE_ITERATIONS, 1, 10);
         ImGui::SameLine();
         ImGui::Checkbox("Solve", &solve_pressure_divergence_free);
+        ImGui::Checkbox("Parallelize divergence solve using CUDA?", &parallelize_divergence_solve_cuda);
         ImGui::NewLine();
         if (solve_pressure_divergence_free)
         {

@@ -9,3 +9,6 @@ void solve_pressure_for_divergence_free_velocity_field(float* hvels, float* vvel
 void apply_pressure_gradient_to_velocity_field(float* hvels, float* vvels, const float* pressures, const Dimensions& dims, const float ρ, const float dt);
 void apply_gravity_to_velocity_field(float *vvels, const Dimensions &dims, const std::vector<bool> &walls, const float g, const float dt);
 void advect_velocities(float *hvels, float *vvels, const Dimensions &dims, const std::vector<bool> &walls, const float dt, const int iterator_type);
+
+// CUDA kernel launcher for GPU-accelerated pressure solving
+void pressure_solver_kernel_launcher(float* pressure, const float* hvels, const float* vvels, const Dimensions& dims, const float ρ, const std::vector<bool>& walls, const float dt, const int iterations);
