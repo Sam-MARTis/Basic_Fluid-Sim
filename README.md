@@ -67,4 +67,17 @@ Make waves with your mouse!
   - Flow fields
   - Cell pressure
   - Cell Divergence 
+
+## Parallelization
+A checkered grid based solver for incompressibility enforcement is implemented. 
+A cell's parity is first computd by checking if the sum of the row and column index are odd or even. 
+Then, the odd parity cells are first solved for. Next the even cells.
+Since we are using a staggered mac grid, all values will thus be updated without any opportunity of a race condition!
+Requires an NVIDIA GPU capable of supporting CUDA.
+In case of multiple GPUs, be sure to export the vendor as nvidia in your terminal to force the program to use the nvidia gpu
+```bash
+	export __NV_PRIME_RENDER_OFFLOAD=1
+	export __GLX_VENDOR_LIBRARY_NAME=nvidia
+```
+
   
